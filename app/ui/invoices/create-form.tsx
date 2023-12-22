@@ -13,6 +13,7 @@ import { createInvoice } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
+  
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createInvoice, initialState);
   
@@ -129,7 +130,16 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 ))}
             </div>
         </fieldset>
+
+        <div id="invoice-status-error" aria-live="polite" aria-atomic="true">
+          {state.errors?.status && state.errors.status.map((error: string) => (
+              <p className="mt-2 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+        </div>
       </div>
+
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/dashboard/invoices"
