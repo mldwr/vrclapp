@@ -96,7 +96,6 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                   type="radio"
                   value="pending"
                   className="h-4 w-4 border-gray-300 bg-gray-100 text-gray-600 focus:ring-2 focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-gray-600"
-                  aria-describedby="invoice-status-error"
                 />
                 <label
                   htmlFor="pending"
@@ -122,7 +121,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
               </div>
             </div>
           </div>
-          <div id="invoice-status-error" aria-live="polite" aria-atomic="true">
+          <div aria-live="polite" aria-atomic="true">
               {state.errors?.status && state.errors.status.map((error: string) => (
                   <p className="mt-2 text-sm text-red-500" key={error}>
                     {error}
@@ -131,12 +130,12 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
             </div>
         </fieldset>
 
-        <div id="invoice-status-error" aria-live="polite" aria-atomic="true">
-          {state.errors?.status && state.errors.status.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
+        <div aria-live="polite" aria-atomic="true">
+          {state.message? (
+              <p className="mt-2 text-sm text-red-500">
+                {state.message}
               </p>
-            ))}
+            ): null}
         </div>
       </div>
 
