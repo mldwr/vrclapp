@@ -10,10 +10,8 @@ export default async function CustomersTable({
 }) {
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
-        Customers
-      </h1>
-      <Search placeholder="Search customers..." />
+      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>        Trainer      </h1> 
+      <Search placeholder="Suche Trainer..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -45,16 +43,16 @@ export default async function CustomersTable({
                     </div>
                     <div className="flex w-full items-center justify-between border-b py-5">
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Pending</p>
+                        <p className="text-xs">Ausstehend</p>
                         <p className="font-medium">{customer.total_pending}</p>
                       </div>
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Paid</p>
+                        <p className="text-xs">Genehmigt</p>
                         <p className="font-medium">{customer.total_paid}</p>
                       </div>
                     </div>
                     <div className="pt-4 text-sm">
-                      <p>{customer.total_invoices} invoices</p>
+                      <p>{customer.total_invoices} Abrechnungen</p>
                     </div>
                   </div>
                 ))}
@@ -69,13 +67,13 @@ export default async function CustomersTable({
                       Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Total Invoices
+                      Abrechnungen
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Total Pending
+                      Ausstehend
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Total Paid
+                      Genehmigt
                     </th>
                   </tr>
                 </thead>

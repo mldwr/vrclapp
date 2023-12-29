@@ -1,5 +1,6 @@
 import { sql } from '@vercel/postgres';
 import {
+  GroupsField,
   CustomerField,
   CustomersTable,
   InvoiceForm,
@@ -106,7 +107,8 @@ export async function fetchFilteredInvoices( query: string, currentPage: number,
         invoices.status,
         customers.name,
         customers.email,
-        customers.image_url
+        customers.image_url,
+        invoices.groupid
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       WHERE
@@ -174,7 +176,26 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
+export async function fetchGroups() {
+  noStore();
+  try {
+    const data = await sql<GroupsField>`
+      SELECT
+        name
+      FROM groups
+      ORDER BY name ASC
+    `;
+
+    const groups = data.rows;
+    return groups;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch all groups.');
+  }
+}
+
 export async function fetchCustomers() {
+  noStore();
   try {
     const data = await sql<CustomerField>`
       SELECT
@@ -195,15 +216,15 @@ export async function fetchCustomers() {
 export async function fetchFilteredCustomers(query: string) {
   noStore();
   try {
-    const data = await sql<CustomersTable>`
+    const customers = await sql<CustomersTable>`
 		SELECT
 		  customers.id,
 		  customers.name,
 		  customers.email,
 		  customers.image_url,
 		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
+		  SUM(CASE WHEN invoices.status = 'ausstehend' THEN invoices.amount ELSE 0 END) AS total_pending,
+		  SUM(CASE WHEN invoices.status = 'genehmigt' THEN invoices.amount ELSE 0 END) AS total_paid
 		FROM customers
 		LEFT JOIN invoices ON customers.id = invoices.customer_id
 		WHERE
@@ -213,13 +234,13 @@ export async function fetchFilteredCustomers(query: string) {
 		ORDER BY customers.name ASC
 	  `;
 
-    const customers = data.rows.map((customer) => ({
+    /* const customers = data.rows.map((customer) => ({
       ...customer,
       total_pending: formatCurrency(customer.total_pending),
       total_paid: formatCurrency(customer.total_paid),
-    }));
+    })); */
 
-    return customers;
+    return customers.rows;
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');

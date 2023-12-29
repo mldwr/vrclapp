@@ -52,7 +52,8 @@ export type InvoicesTable = {
   image_url: string;
   date: string;
   amount: number;
-  status: 'pending' | 'paid';
+  status: 'ausstehend' | 'genehmigt';
+  groupid: string;
 };
 
 export type CustomersTable = {
@@ -71,12 +72,20 @@ export type FormattedCustomersTable = {
   email: string;
   image_url: string;
   total_invoices: number;
-  total_pending: string;
-  total_paid: string;
+  total_pending: number;
+  total_paid: number;
+  // the FormattedCustomersTable was used to hold the currency format.
+  // see data.ts and fetchFilteredCustomers
+  // total_pending: string;
+  // total_paid: string;
 };
 
 export type CustomerField = {
   id: string;
+  name: string;
+};
+
+export type GroupsField = {
   name: string;
 };
 

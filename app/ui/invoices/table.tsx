@@ -42,7 +42,8 @@ export default async function InvoicesTable({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {formatCurrency(invoice.amount)}
+                      {/* {formatCurrency(invoice.amount)} */}
+                      {invoice.amount}
                     </p>
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
@@ -58,16 +59,19 @@ export default async function InvoicesTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
+                  Trainer
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email
+                  Gruppe
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  Teilnehmer
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Stunden
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Datum
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Status
@@ -96,10 +100,15 @@ export default async function InvoicesTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {invoice.email}
+                    {invoice.groupid}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {formatCurrency(invoice.amount)}
+                    {/* {formatCurrency(invoice.amount)} */}
+                    {invoice.amount}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {/* {formatCurrency(invoice.amount)} */}
+                    {invoice.amount}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocal(invoice.date)}

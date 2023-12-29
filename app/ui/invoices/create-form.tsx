@@ -1,21 +1,28 @@
 'use client';
 
 import { CustomerField } from '@/app/lib/definitions';
+import { GroupsField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
+  UserPlusIcon,
+  CalendarDaysIcon,
+  CalendarIcon,
+  UsersIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { createInvoice } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 
-export default function Form({ customers }: { customers: CustomerField[] }) {
+export default function Form({ customers, groups, }: { customers: CustomerField[], groups: GroupsField[], }) {
   
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createInvoice, initialState);
+
+  //console.log("Error messages for groupName:", state)
   
   return (
     <form action={dispatch}>
@@ -23,7 +30,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         {/* Customer Name */}
         <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
-            Choose customer
+            Trainer Name
           </label>
           <div className="relative">
             <select
@@ -34,7 +41,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
               aria-describedby="customer-error"
             >
               <option value="" disabled>
-                Select a customer
+                Wähle einen Trainer
               </option>
               {customers.map((customer) => (
                 <option key={customer.id} value={customer.id}>
@@ -54,10 +61,71 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
         </div>
 
+        {/* Group Name */}
+        <div className="mb-4">
+          <label htmlFor="group" className="mb-2 block text-sm font-medium">
+            Gruppenname
+          </label>
+          <div className="relative">
+            <select
+              name="groupId"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              defaultValue=""
+              aria-describedby="group-error"
+            >
+              <option value="" disabled>
+                Wähle eine Gruppe
+              </option>
+              {groups.map((group) => (
+                <option key={group.name} value={group.name}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+            <UsersIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          <div id="group-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.groupId &&
+              state.errors.groupId.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
+        </div>
+
+        {/* Number of Participants */}
+        <div className="mb-4">
+          <label htmlFor="part" className="mb-2 block text-sm font-medium">
+            Anzahl Teilnehmer
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="part"
+                name="part"
+                type="number"
+                step="1"
+                placeholder="Wähle eine Anzahl"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="part-error"
+              />
+              <UserPlusIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+            <div id="part-error" aria-live="polite" aria-atomic="true">
+              {state.errors?.part && state.errors.part.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+          </div>
+        </div>
+
         {/* Invoice Amount */}
         <div className="mb-4">
           <label htmlFor="amount" className="mb-2 block text-sm font-medium">
-            Choose an amount
+            Anzahl Stunden
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
@@ -65,12 +133,12 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 id="amount"
                 name="amount"
                 type="number"
-                step="0.01"
-                placeholder="Enter USD amount"
+                step="1"
+                placeholder="Wähle eine Anzahl"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="invoice-error"
               />
-              <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <ClockIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
             <div id="invoice-error" aria-live="polite" aria-atomic="true">
               {state.errors?.amount && state.errors.amount.map((error: string) => (
@@ -82,8 +150,37 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
         </div>
 
+        
+
+        {/* Invoice Date */}
+        <div className="mb-4">
+          <label htmlFor="dateId" className="mb-2 block text-sm font-medium">
+            Datum der Teilnahme
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="dateId"
+                name="dateId"
+                type="date"
+                placeholder="Wähle ein Datum"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="invoice-error"
+              />
+              <CalendarDaysIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+            <div id="invoice-error" aria-live="polite" aria-atomic="true">
+              {state.errors?.dateId && state.errors.dateId.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+          </div>
+        </div>
+
         {/* Invoice Status */}
-        <fieldset>
+        {/*<fieldset>
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
@@ -128,7 +225,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                   </p>
                 ))}
             </div>
-        </fieldset>
+        </fieldset>*/}
 
         <div aria-live="polite" aria-atomic="true">
           {state.message? (
