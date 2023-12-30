@@ -93,34 +93,34 @@ export default function EditInvoiceForm({  invoice,  customers,}: {  invoice: In
             <div className="flex gap-4">
               <div className="flex items-center">
                 <input
-                  id="pending"
+                  id="ausstehend"
                   name="status"
                   type="radio"
-                  value="pending"
-                  defaultChecked={invoice.status === 'pending'}
+                  value="ausstehend"
+                  defaultChecked={invoice.status === 'ausstehend'}
                   className="h-4 w-4 border-gray-300 bg-gray-100 text-gray-600 focus:ring-2 focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-gray-600"
                 />
                 <label
-                  htmlFor="pending"
+                  htmlFor="ausstehend"
                   className="ml-2 flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300"
                 >
-                  Pending <ClockIcon className="h-4 w-4" />
+                  Ausstehend <ClockIcon className="h-4 w-4" />
                 </label>
               </div>
               <div className="flex items-center">
                 <input
-                  id="paid"
+                  id="genehmigt"
                   name="status"
                   type="radio"
-                  value="paid"
-                  defaultChecked={invoice.status === 'paid'}
+                  value="genehmigt"
+                  defaultChecked={invoice.status === 'genehmigt'}
                   className="h-4 w-4 border-gray-300 bg-gray-100 text-gray-600 focus:ring-2 focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-gray-600"
                 />
                 <label
-                  htmlFor="paid"
+                  htmlFor="genehmigt"
                   className="ml-2 flex items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white dark:text-gray-300"
                 >
-                  Paid <CheckIcon className="h-4 w-4" />
+                  Genehmigt <CheckIcon className="h-4 w-4" />
                 </label>
               </div>
             </div>
