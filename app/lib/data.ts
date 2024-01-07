@@ -10,8 +10,9 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
-
 import { unstable_noStore as noStore } from 'next/cache';
+import { auth } from '@/app/../auth';
+
 
 export async function fetchRevenue() {
   // Add noStore() here prevent the response from being cached.
@@ -96,6 +97,9 @@ export async function fetchCardData() {
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices( query: string, currentPage: number,) {
   noStore();
+  
+  let session = await auth();
+
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -112,11 +116,12 @@ export async function fetchFilteredInvoices( query: string, currentPage: number,
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       WHERE
-        customers.name ILIKE ${`%${query}%`} OR
+        (customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`} OR
         invoices.amount::text ILIKE ${`%${query}%`} OR
         invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
+        invoices.status ILIKE ${`%${query}%`}) AND
+        customers.email = ${`${session?.user?.email}`}
       ORDER BY invoices.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
@@ -130,16 +135,18 @@ export async function fetchFilteredInvoices( query: string, currentPage: number,
 
 export async function fetchInvoicesPages(query: string) {
   noStore();
+  let session = await auth();
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
     JOIN customers ON invoices.customer_id = customers.id
     WHERE
-      customers.name ILIKE ${`%${query}%`} OR
+      (customers.name ILIKE ${`%${query}%`} OR
       customers.email ILIKE ${`%${query}%`} OR
       invoices.amount::text ILIKE ${`%${query}%`} OR
       invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
+      invoices.status ILIKE ${`%${query}%`}) AND
+      customers.email = ${`${session?.user?.email}`}
   `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);

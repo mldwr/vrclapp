@@ -54,6 +54,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
     part: formData.get('part'),
   });
 
+  //console.log(prevState)
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
