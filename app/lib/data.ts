@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { sql, db } from '@vercel/postgres';
 import {
   GroupsField,
   CustomerField,
@@ -11,7 +11,6 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
-import { auth } from '@/app/../auth';
 
 
 export async function fetchRevenue() {
@@ -95,16 +94,55 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices( query: string, currentPage: number,) {
+export async function fetchFilteredInvoices( query: string, currentPage: number) {
   noStore();
-  
-  let session = await auth();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
+       
     const invoices = await sql<InvoicesTable>`
-      SELECT
+    SELECT
+        invoices.id,
+        invoices.amount,
+        invoices.date,
+        invoices.status,
+        customers.name,
+        customers.email,
+        customers.image_url,
+        invoices.groupid
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        customers.name ILIKE ${`%${query}%`} OR
+        customers.email ILIKE ${`%${query}%`} OR
+        invoices.amount::text ILIKE ${`%${query}%`} OR
+        invoices.date::text ILIKE ${`%${query}%`} OR
+        invoices.status ILIKE ${`%${query}%`}
+      ORDER BY invoices.date DESC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+
+    return invoices.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoices.');
+  }
+}
+
+
+export async function fetchFilteredInvoicesList( query: string, currentPage: number, emailList: string[]) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  //const emailList = ['steph@dietz.com', 'steven@tey.com','metin@gwv.de',''];
+
+  try {
+       
+    const invoices = await sql<InvoicesTable>`
+    SELECT
         invoices.id,
         invoices.amount,
         invoices.date,
@@ -121,10 +159,11 @@ export async function fetchFilteredInvoices( query: string, currentPage: number,
         invoices.amount::text ILIKE ${`%${query}%`} OR
         invoices.date::text ILIKE ${`%${query}%`} OR
         invoices.status ILIKE ${`%${query}%`}) AND
-        customers.email = ${`${session?.user?.email}`}
+        customers.email in (${emailList[0]}, ${emailList[1]},${emailList[2]}, ${emailList[3]})
       ORDER BY invoices.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
+
 
     return invoices.rows;
   } catch (error) {
@@ -133,11 +172,13 @@ export async function fetchFilteredInvoices( query: string, currentPage: number,
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+
+export async function fetchInvoicesPagesList(query: string, emailList: string[]) {
   noStore();
-  let session = await auth();
+  
   try {
-    const count = await sql`SELECT COUNT(*)
+    const count = await sql`
+    SELECT COUNT(*)
     FROM invoices
     JOIN customers ON invoices.customer_id = customers.id
     WHERE
@@ -145,8 +186,8 @@ export async function fetchInvoicesPages(query: string) {
       customers.email ILIKE ${`%${query}%`} OR
       invoices.amount::text ILIKE ${`%${query}%`} OR
       invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}) AND
-      customers.email = ${`${session?.user?.email}`}
+      invoices.status ILIKE ${`%${query}%`})AND
+      customers.email in (${emailList[0]}, ${emailList[1]},${emailList[2]}, ${emailList[3]})
   `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
@@ -156,6 +197,32 @@ export async function fetchInvoicesPages(query: string) {
     throw new Error('Failed to fetch total number of invoices.');
   }
 }
+
+export async function fetchInvoicesPages(query: string) {
+  noStore();
+  
+  try {
+    const count = await sql`
+    SELECT COUNT(*)
+    FROM invoices
+    JOIN customers ON invoices.customer_id = customers.id
+    WHERE
+      customers.name ILIKE ${`%${query}%`} OR
+      customers.email ILIKE ${`%${query}%`} OR
+      invoices.amount::text ILIKE ${`%${query}%`} OR
+      invoices.date::text ILIKE ${`%${query}%`} OR
+      invoices.status ILIKE ${`%${query}%`}
+  `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of invoices.');
+  }
+}
+
+
 
 export async function fetchInvoiceById(id: string) {
   noStore();

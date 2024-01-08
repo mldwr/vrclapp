@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
+import { UpdateInvoice, DeleteInvoice } from '@/app/ui/approvals/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredInvoicesList } from '@/app/lib/data';
 
-export default async function InvoicesTable({
+export default async function ApprovalsTable({
   query,
   currentPage,
   userEmail,
@@ -14,6 +14,9 @@ export default async function InvoicesTable({
   userEmail: string[];
 }) {
   const invoices = await fetchFilteredInvoicesList(query, currentPage, userEmail);
+
+  //const invoices = allInvoices.filter(invoice => invoice.email !== userEmail);
+
 
   return (
     <div className="mt-6 flow-root">

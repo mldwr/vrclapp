@@ -17,7 +17,7 @@ const links = [
   { name: 'Übersicht', href: '/dashboard', icon: HomeIcon },
   { name: 'Abrechnungen', href: '/dashboard/invoices', icon: DocumentDuplicateIcon, },
   { name: 'Trainer', href: '/dashboard/customers', icon: UserCircleIcon },
-  { name: 'Freigaben', href: '/dashboard/approve', icon: UserGroupIcon },
+  { name: 'Freigaben', href: '/dashboard/approvals', icon: UserGroupIcon },
 ];
 
 export default function NavLinks() {
