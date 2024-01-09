@@ -24,6 +24,7 @@ export default function Form({ customers, groups, }: { customers: CustomerField[
 
   const customerName = customers.map(customer => customer.name);
   const customerId = customers.map(customer => customer.id);
+  console.log(customerId,' ',customerName)
   
   return (
     <form action={dispatch}>
@@ -50,7 +51,6 @@ export default function Form({ customers, groups, }: { customers: CustomerField[
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
               defaultValue=""
               aria-describedby="customer-error"
-              disabled
             >
               {/* <option value="" disabled>
                 Wähle einen Trainer
@@ -253,9 +253,9 @@ export default function Form({ customers, groups, }: { customers: CustomerField[
           href="/dashboard/invoices"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
-          Cancel
+          Abbrechen
         </Link>
-        <Button type="submit">Create Invoice</Button>
+        <Button type="submit">Erstelle Abrechnung</Button>
       </div>
     </form>
   );

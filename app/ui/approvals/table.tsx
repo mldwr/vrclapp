@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/approvals/buttons';
+import { UpdateInvoice, DeleteInvoice, ApproveInvoice } from '@/app/ui/approvals/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
 import { fetchFilteredInvoicesList } from '@/app/lib/data';
@@ -15,7 +15,7 @@ export default async function ApprovalsTable({
 }) {
   const invoices = await fetchFilteredInvoicesList(query, currentPage, userEmail);
 
-  //const invoices = allInvoices.filter(invoice => invoice.email !== userEmail);
+  const approveId = 'genehmigt'
 
 
   return (
@@ -53,6 +53,7 @@ export default async function ApprovalsTable({
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
                   <div className="flex justify-end gap-2">
+                    <ApproveInvoice id={invoice.id} approveId={approveId}/>
                     <UpdateInvoice id={invoice.id} />
                     <DeleteInvoice id={invoice.id} />
                   </div>
@@ -123,6 +124,7 @@ export default async function ApprovalsTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
+                      <ApproveInvoice id={invoice.id} approveId={approveId}/>
                       <UpdateInvoice id={invoice.id} />
                       <DeleteInvoice id={invoice.id} />
                     </div>

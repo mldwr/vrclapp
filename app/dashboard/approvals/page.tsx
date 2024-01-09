@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   title: 'Approvals',
 };
  
-//export default async function Page() {
 export default async function Page({
     searchParams,
   }: {

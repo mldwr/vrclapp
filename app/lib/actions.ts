@@ -54,7 +54,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
     part: formData.get('part'),
   });
 
-  //console.log(prevState)
+  //console.log(prevState.message)
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -131,6 +131,22 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     
     } catch (error) {
         return { message: 'Database Error: Failed to Delete Invoice.' };
+    }
+    revalidatePath('/dashboard/invoices');
+   
+   }
+
+   export async function approveInvoice(id: string, approveId: string) {
+    //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
+
+    console.log('approveId:', approveId, id)
+    
+    try {
+        
+        await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
+    
+    } catch (error) {
+        return { message: 'Database Error: Failed to Approve Invoice.' };
     }
     revalidatePath('/dashboard/invoices');
    
