@@ -1,4 +1,4 @@
-import { sql, db } from '@vercel/postgres';
+import { sql } from '@vercel/postgres';
 import {
   GroupsField,
   CustomerField,
@@ -172,7 +172,6 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
   }
 }
 
-
 export async function fetchInvoicesPagesList(query: string, emailList: string[]) {
   noStore();
   
@@ -240,10 +239,10 @@ export async function fetchInvoiceById(id: string) {
     const invoice = data.rows.map((invoice) => ({
       ...invoice,
       // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
+      //amount: invoice.amount / 100,
     }));
     
-    console.log(invoice)
+    // console.log(invoice)
     return invoice[0];
   } catch (error) {
     console.error('Database Error:', error);
@@ -329,4 +328,55 @@ export async function getUser(email: string) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
   }
+}
+
+
+export async function fetchRoleId(sessionUserEmail: string | null | undefined){
+  noStore();
+
+  try{
+    const roleId = await sql<User>`
+    SELECT
+    role
+    from USERS
+    where email = ${sessionUserEmail}
+    `;
+
+    return roleId.rows[0].role;
+  }catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch approveId.');
+  }
+}
+
+
+  // increase the state going from ausstehend to geprüft to genehmigt
+  // state depends on the role of the current user
+  // Übungsleiter can only increase from ausstehend to greprüft
+  // Vorseitzender can only increase from geprüft to genehmigt
+export async function fetchApproveId(roleId: string, currentApproval: string){
+
+  const aprovalsRole: {[key: string]: string} = {
+    'Spartenleiter': 'geprüft',
+    'Vorsitzender': 'genehmigt',
+  };
+
+  const aprovalsRank: {[key: string]: string} = {
+    'ausstehend': '1',
+    'geprüft': '2',
+    'genehmigt': '3',
+  };
+
+  const requestedApproval = aprovalsRole[roleId];
+  const requestedApprovalRank = aprovalsRank[requestedApproval]
+  const currentApprovalRank = aprovalsRank[currentApproval]
+
+  // jumping from ausstehend to genehmigt is not allowed
+  // also moving the rank down is not allowed
+  if(requestedApprovalRank > currentApprovalRank && Math.abs(Number(requestedApprovalRank)-Number(currentApprovalRank))===1){
+      return requestedApproval
+  }
+
+  return currentApproval
+
 }

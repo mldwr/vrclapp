@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { deleteInvoice, approveInvoice } from '@/app/lib/actions';
+import { InvoicesTable } from '@/app/lib/definitions';
 
 
 export function UpdateInvoice({ id }: { id: string }) {
@@ -33,8 +34,8 @@ export function DeleteInvoice({ id }: { id: string }) {
   );
 }
 
-export function ApproveInvoice({ id, approveId }: { id: string, approveId: string }) {
-  const approveInvoiceWithId = approveInvoice.bind(null, id, approveId);
+export function ApproveInvoice({ id, invoices, sessionUserEmail }: { id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined }) {
+  const approveInvoiceWithId = approveInvoice.bind(null, id, invoices, sessionUserEmail);
 
   return (
     <form action={approveInvoiceWithId}>

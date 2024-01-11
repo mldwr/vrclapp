@@ -41,7 +41,7 @@ export default async function Page({
         <Search placeholder="Suche Abrechnungen..." />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} userEmail={userEmail}/>
+        <Table query={query} currentPage={currentPage} userEmail={userEmail} sessionUserEmail={sessionUserEmail}/>
       </Suspense> 
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

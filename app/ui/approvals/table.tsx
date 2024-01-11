@@ -8,15 +8,14 @@ export default async function ApprovalsTable({
   query,
   currentPage,
   userEmail,
+  sessionUserEmail,
 }: {
   query: string;
   currentPage: number;
   userEmail: string[];
+  sessionUserEmail: string | null | undefined;
 }) {
   const invoices = await fetchFilteredInvoicesList(query, currentPage, userEmail);
-
-  const approveId = 'genehmigt'
-
 
   return (
     <div className="mt-6 flow-root">
@@ -53,7 +52,7 @@ export default async function ApprovalsTable({
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <ApproveInvoice id={invoice.id} approveId={approveId}/>
+                    <ApproveInvoice id={invoice.id} invoices={invoices} sessionUserEmail={sessionUserEmail}/>
                     <UpdateInvoice id={invoice.id} />
                     <DeleteInvoice id={invoice.id} />
                   </div>
@@ -124,7 +123,7 @@ export default async function ApprovalsTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <ApproveInvoice id={invoice.id} approveId={approveId}/>
+                      <ApproveInvoice id={invoice.id} invoices={invoices} sessionUserEmail={sessionUserEmail} />
                       <UpdateInvoice id={invoice.id} />
                       <DeleteInvoice id={invoice.id} />
                     </div>

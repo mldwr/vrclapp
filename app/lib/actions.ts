@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { InvoicesTable } from '@/app/lib/definitions';
+import { fetchRoleId, fetchApproveId } from '@/app/lib/data';
  
 const FormSchema = z.object({
   id: z.string(),
@@ -136,21 +138,6 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
    
    }
 
-   export async function approveInvoice(id: string, approveId: string) {
-    //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
-
-    console.log('approveId:', approveId, id)
-    
-    try {
-        
-        await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
-    
-    } catch (error) {
-        return { message: 'Database Error: Failed to Approve Invoice.' };
-    }
-    revalidatePath('/dashboard/invoices');
-   
-   }
 
    export async function authenticate( prevState: string | undefined,  formData: FormData,  ) {
     try {
@@ -167,3 +154,26 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
       throw error;
     }
   }
+
+
+  export async function approveInvoice(id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined) {
+    //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
+
+    console.log('id ',id)
+
+    const roleId = await fetchRoleId(sessionUserEmail);
+    const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
+    const approveId = await fetchApproveId(roleId, currentApproval);
+    console.log('invoces ',roleId, currentApproval)
+    console.log('approvalid ', approveId)
+    
+    try {
+        
+        await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
+    
+    } catch (error) {
+        return { message: 'Database Error: Failed to Approve Invoice.' };
+    }
+    revalidatePath('/dashboard/invoices');
+   
+   }
