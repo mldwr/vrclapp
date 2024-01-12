@@ -24,7 +24,6 @@ export default function Form({ customers, groups, }: { customers: CustomerField[
 
   const customerName = customers.map(customer => customer.name);
   const customerId = customers.map(customer => customer.id);
-  console.log(customerId,' ',customerName)
   
   return (
     <form action={dispatch}>

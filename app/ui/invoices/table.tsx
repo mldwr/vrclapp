@@ -15,6 +15,8 @@ export default async function InvoicesTable({
 }) {
   const invoices = await fetchFilteredInvoicesList(query, currentPage, userEmail);
 
+  console.log('invoices ',invoices)
+
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -105,8 +107,7 @@ export default async function InvoicesTable({
                     {invoice.groupid}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {/* {formatCurrency(invoice.amount)} */}
-                    {invoice.amount}
+                    {invoice.part}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {/* {formatCurrency(invoice.amount)} */}

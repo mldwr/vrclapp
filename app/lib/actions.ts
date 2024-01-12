@@ -159,13 +159,9 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
   export async function approveInvoice(id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined) {
     //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
 
-    console.log('id ',id)
-
     const roleId = await fetchRoleId(sessionUserEmail);
     const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
     const approveId = await fetchApproveId(roleId, currentApproval);
-    console.log('invoces ',roleId, currentApproval)
-    console.log('approvalid ', approveId)
     
     try {
         

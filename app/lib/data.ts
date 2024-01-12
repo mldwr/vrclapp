@@ -145,6 +145,7 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
     SELECT
         invoices.id,
         invoices.amount,
+        invoices.part,
         invoices.date,
         invoices.status,
         customers.name,

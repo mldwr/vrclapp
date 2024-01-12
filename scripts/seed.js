@@ -22,7 +22,9 @@ async function seedUsers(client) {
 
     // insert example:
     // INSERT INTO users(id, name, email, password) VALUES (uuid_generate_v4(), 'user2', 'user2@nextmail.com', '$2b$10$FPYkwnaJJJ4aSCU0njISl.rJfB.SCM7T4mQ260gWXNc9m5QK.Plae');
-    // insert into customers(id, name, email, image_url) values (uuid_generate_v4(), 'Metin Ilgün', 'metinilguen@gwvallstedt.de', '/customers/delba-de-oliveira.png')
+    // INSERT INTO users(id, name, email, password, role) VALUES (uuid_generate_v4(), 'Kertin Mintel', 'kerstin@gwv.de', '$2b$10$FPYkwnaJJJ4aSCU0njISl.rJfB.SCM7T4mQ260gWXNc9m5QK.Plae', 'Uebungsleiter');
+    // INSERT INTO customers(id, name, email, image_url) values (uuid_generate_v4(), 'Metin Ilgün', 'metinilguen@gwvallstedt.de', '/customers/delba-de-oliveira.png')
+    // INSERT INTO customers(id, name, email, image_url) values (uuid_generate_v4(), 'Rene', 'rene@gwv.de', '/customers/evil_rabbit.png')
 
     console.log(`Created "users" table`);
 
