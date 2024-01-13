@@ -23,7 +23,7 @@ export default async function Page({
 
     let session = await auth();
     const sessionUserEmail = session?.user?.email;
-    const userEmail = ['steph@dietz.com', 'steven@tey.com','',''];
+    const userEmail = ['daniela@gwv.de', 'kerstin@gwv.de','',''];
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;

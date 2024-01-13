@@ -35,14 +35,22 @@ export function DeleteInvoice({ id }: { id: string }) {
 }
 
 export function ApproveInvoice({ id, invoices, sessionUserEmail }: { id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined }) {
-  const approveInvoiceWithId = approveInvoice.bind(null, id, invoices, sessionUserEmail);
 
-  return (
-    <form action={approveInvoiceWithId}>
-      <button className="rounded-md border p-2 hover:bg-gray-100">
-        <span className="sr-only">Approve</span>
-        <CheckCircleIcon className="w-5" />
-      </button>
-    </form>
-  );
+
+  // get current state of the invoice: approved ? don't show the button : show the button
+  const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
+
+  if(currentApproval !== 'genehmigt'){
+
+    const approveInvoiceWithId = approveInvoice.bind(null, id, currentApproval, sessionUserEmail);
+
+    return (
+      <form action={approveInvoiceWithId}>
+        <button className="rounded-md border p-2 hover:bg-gray-100">
+          <span className="sr-only">Approve</span>
+          <CheckCircleIcon className="w-5" />
+        </button>
+      </form>
+    );
+  }
 }

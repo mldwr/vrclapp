@@ -124,8 +124,8 @@ export default async function ApprovalsTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <ApproveInvoice id={invoice.id} invoices={invoices} sessionUserEmail={sessionUserEmail} />
-                      <UpdateInvoice id={invoice.id} />
-                      <DeleteInvoice id={invoice.id} />
+                      {/* <UpdateInvoice id={invoice.id} />
+                      <DeleteInvoice id={invoice.id} /> */}
                     </div>
                   </td>
                 </tr>

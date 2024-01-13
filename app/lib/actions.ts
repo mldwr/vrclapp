@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { InvoicesTable } from '@/app/lib/definitions';
-import { fetchRoleId, fetchApproveId } from '@/app/lib/data';
+import { fetchRoleId } from '@/app/lib/data';
  
 const FormSchema = z.object({
   id: z.string(),
@@ -156,20 +156,59 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
   }
 
 
-  export async function approveInvoice(id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined) {
+  export async function approveInvoice(id: string, currentApproval: string, sessionUserEmail: string | null | undefined) {
     //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
 
     const roleId = await fetchRoleId(sessionUserEmail);
-    const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
     const approveId = await fetchApproveId(roleId, currentApproval);
-    
-    try {
-        
-        await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
-    
-    } catch (error) {
-        return { message: 'Database Error: Failed to Approve Invoice.' };
+
+    if(currentApproval === approveId){
+      console.log('no change')
+    }else{
+      try {
+          
+          await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
+      
+      } catch (error) {
+          return { message: 'Database Error: Failed to Approve Invoice.' };
+      }
+
     }
+    
     revalidatePath('/dashboard/invoices');
    
    }
+
+
+
+
+  // increase the state going from ausstehend to geprüft to genehmigt
+  // state depends on the role of the current user
+  // Übungsleiter can only increase from ausstehend to greprüft
+  // Vorseitzender can only increase from geprüft to genehmigt
+export async function fetchApproveId(roleId: string, currentApproval: string){
+
+  const aprovalsRole: {[key: string]: string} = {
+    'Spartenleiter': 'geprüft',
+    'Vorsitzender': 'genehmigt',
+  };
+
+  const aprovalsRank: {[key: string]: string} = {
+    'ausstehend': '1',
+    'geprüft': '2',
+    'genehmigt': '3',
+  };
+
+  const requestedApproval = aprovalsRole[roleId];
+  const requestedApprovalRank = aprovalsRank[requestedApproval]
+  const currentApprovalRank = aprovalsRank[currentApproval]
+
+  // jumping from ausstehend to genehmigt is not allowed
+  // also moving the rank down is not allowed
+  if(requestedApprovalRank > currentApprovalRank && Math.abs(Number(requestedApprovalRank)-Number(currentApprovalRank))===1){
+      return requestedApproval
+  }
+
+  return currentApproval
+
+}

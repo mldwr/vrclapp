@@ -353,35 +353,3 @@ export async function fetchRoleId(sessionUserEmail: string | null | undefined){
     throw new Error('Failed to fetch approveId.');
   }
 }
-
-
-  // increase the state going from ausstehend to geprüft to genehmigt
-  // state depends on the role of the current user
-  // Übungsleiter can only increase from ausstehend to greprüft
-  // Vorseitzender can only increase from geprüft to genehmigt
-export async function fetchApproveId(roleId: string, currentApproval: string){
-
-  const aprovalsRole: {[key: string]: string} = {
-    'Spartenleiter': 'geprüft',
-    'Vorsitzender': 'genehmigt',
-  };
-
-  const aprovalsRank: {[key: string]: string} = {
-    'ausstehend': '1',
-    'geprüft': '2',
-    'genehmigt': '3',
-  };
-
-  const requestedApproval = aprovalsRole[roleId];
-  const requestedApprovalRank = aprovalsRank[requestedApproval]
-  const currentApprovalRank = aprovalsRank[currentApproval]
-
-  // jumping from ausstehend to genehmigt is not allowed
-  // also moving the rank down is not allowed
-  if(requestedApprovalRank > currentApprovalRank && Math.abs(Number(requestedApprovalRank)-Number(currentApprovalRank))===1){
-      return requestedApproval
-  }
-
-  return currentApproval
-
-}
