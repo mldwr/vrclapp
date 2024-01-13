@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import {
-  GroupsField,
+  GroupsTable,
   CustomerField,
   CustomersTable,
   InvoiceForm,
@@ -253,10 +253,13 @@ export async function fetchInvoiceById(id: string) {
 export async function fetchGroups() {
   noStore();
   try {
-    const data = await sql<GroupsField>`
+    const data = await sql<GroupsTable>`
       SELECT
-        name
-      FROM groups
+        name,
+        spartenleiter,
+        uebungsleiter_1,
+        uebungsleiter_2
+      FROM sparten
       ORDER BY name ASC
     `;
 
@@ -264,7 +267,7 @@ export async function fetchGroups() {
     return groups;
   } catch (err) {
     console.error('Database Error:', err);
-    throw new Error('Failed to fetch all groups.');
+    throw new Error('Failed to fetch sparten table.');
   }
 }
 
@@ -274,7 +277,8 @@ export async function fetchCustomers() {
     const data = await sql<CustomerField>`
       SELECT
         id,
-        name
+        name,
+        email
       FROM customers
       ORDER BY name ASC
     `;

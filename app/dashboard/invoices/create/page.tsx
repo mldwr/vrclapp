@@ -5,12 +5,12 @@ import { auth } from '@/app/../auth';
  
 export default async function Page() {
   let session = await auth();
-  const authName = session?.user?.name || 'na';
+  const authEmail = session?.user?.email ?? '';
 
   const customers = await fetchCustomers();
   const groups = await fetchGroups();
 
-  const filteredCustomers = customers.filter(customer => customer.name === authName);
+  const filteredCustomers = customers.filter(customer => customer.email === authEmail);
  
   return (
     <main>
@@ -25,7 +25,7 @@ export default async function Page() {
             active: true,
           },
           {
-            label: authName,
+            label: authEmail,
             href: '/dashboard/invoices',
           },
         ]}

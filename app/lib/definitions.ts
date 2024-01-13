@@ -85,10 +85,7 @@ export type FormattedCustomersTable = {
 export type CustomerField = {
   id: string;
   name: string;
-};
-
-export type GroupsField = {
-  name: string;
+  email: string;
 };
 
 export type InvoiceForm = {
@@ -96,4 +93,11 @@ export type InvoiceForm = {
   customer_id: string;
   amount: number;
   status: 'ausstehend' | 'geprüft' | 'genehmigt';
+};
+
+export type GroupsTable = {
+  name: string;
+  spartenleiter: string;
+  uebungsleiter_1: string;
+  uebungsleiter_2: string;
 };

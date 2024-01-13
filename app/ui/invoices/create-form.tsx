@@ -1,7 +1,7 @@
 'use client';
 
 import { CustomerField } from '@/app/lib/definitions';
-import { GroupsField } from '@/app/lib/definitions';
+import { GroupsTable } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
   CheckIcon,
@@ -17,7 +17,7 @@ import { Button } from '@/app/ui/button';
 import { createInvoice } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 
-export default function Form({ customers, groups, }: { customers: CustomerField[], groups: GroupsField[], }) {
+export default function Form({ customers, groups, }: { customers: CustomerField[], groups: GroupsTable[], }) {
   
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createInvoice, initialState);
