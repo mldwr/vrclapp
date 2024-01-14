@@ -1,19 +1,26 @@
 import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
+import { fetchInvoiceById, fetchCustomers, fetchGroups } from '@/app/lib/data';
+import { auth } from '@/app/../auth';
 
 import { notFound } from 'next/navigation';
  
 export default async function Page({ params }: { params: { id: string } }) {
-    const id = params.id;
-    const [invoice, customers] = await Promise.all([
-        fetchInvoiceById(id),
-        fetchCustomers(),
-      ]);
-      
-      if (!invoice) {
-        notFound();
-      }
+  let session = await auth();
+  const authEmail = session?.user?.email ?? '';
+
+  const id = params.id;
+  const [invoice, customers, groups] = await Promise.all([
+      fetchInvoiceById(id),
+      fetchCustomers(),
+      fetchGroups(),
+    ]);
+    
+  if (!invoice) {
+    notFound();
+  }
+  
+  const filteredCustomers = customers.filter(customer => customer.email === authEmail);
 
   return (
     <main>
@@ -27,7 +34,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <Form invoice={invoice} customers={customers} />
+      <Form invoice={invoice} customers={filteredCustomers} groups={groups} />
     </main>
   );
 }

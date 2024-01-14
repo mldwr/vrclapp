@@ -19,15 +19,11 @@ export default async function Page() {
           { label: 'Abrechnungen', 
             href: '/dashboard/invoices' 
           },
-          {
+          /* {
             label: 'Erstelle Abrechnung',
             href: '/dashboard/invoices/create',
             active: true,
-          },
-          {
-            label: authEmail,
-            href: '/dashboard/invoices',
-          },
+          }, */
         ]}
       />
       <Form customers={filteredCustomers} groups={groups}/>
