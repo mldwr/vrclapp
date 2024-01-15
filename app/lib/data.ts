@@ -232,7 +232,8 @@ export async function fetchInvoiceById(id: string) {
         invoices.id,
         invoices.customer_id,
         invoices.amount,
-        invoices.status
+        invoices.status,
+        invoices.groupid
       FROM invoices
       WHERE invoices.id = ${id};
     `;

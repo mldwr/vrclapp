@@ -8,6 +8,8 @@ import {
   UserCircleIcon,
   ArrowPathRoundedSquareIcon,
   UsersIcon,
+  UserPlusIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
@@ -68,7 +70,7 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
             <select
               name="groupId"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              //defaultValue={groups.name}
+              defaultValue={invoice.groupid}
               aria-describedby="group-error"
             >
               <option value="" disabled>
@@ -92,10 +94,69 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
           </div>
         </div>
 
-        {/* Invoice Amount */}
+
+        {/* Invoice Date */}
+        <div className="mb-4">
+          <label htmlFor="dateId" className="mb-2 block text-sm font-medium">
+            Datum der Teilnahme
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="dateId"
+                name="dateId"
+                type="date"
+                placeholder="Wähle ein Datum"
+                defaultValue={invoice.date}
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="invoice-error"
+              />
+              <CalendarDaysIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+            <div id="invoice-error" aria-live="polite" aria-atomic="true">
+              {state.errors?.dateId && state.errors.dateId.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+          </div>
+        </div>
+
+
+        {/* Number of Participants */}
+        <div className="mb-4">
+          <label htmlFor="part" className="mb-2 block text-sm font-medium">
+            Anzahl Teilnehmer
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="part"
+                name="part"
+                type="number"
+                step="1"
+                placeholder="Wähle eine Anzahl"
+                defaultValue={invoice.part}
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="part-error"
+              />
+              <UserPlusIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            </div>
+            <div id="part-error" aria-live="polite" aria-atomic="true">
+              {state.errors?.part && state.errors.part.map((error: string) => (
+                  <p className="mt-2 text-sm text-red-500" key={error}>
+                    {error}
+                  </p>
+                ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Invoice Number of Hours */}
         <div className="mb-4">
           <label htmlFor="amount" className="mb-2 block text-sm font-medium">
-            Choose an amount
+            Anzahl Stunden
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
@@ -104,11 +165,10 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
                 name="amount"
                 type="number"
                 defaultValue={invoice.amount}
-                placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="invoice-error"
               />
-              <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <ClockIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
             <div id="invoice-error" aria-live="polite" aria-atomic="true">
               {state.errors?.amount && state.errors.amount.map((error: string) => (
@@ -120,8 +180,9 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
           </div>
         </div>
 
+
         {/* Invoice Status */}
-        <fieldset>
+        {/* <fieldset>
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
@@ -177,16 +238,16 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
               </div>
             </div>
           </div>
-        </fieldset>
+        </fieldset> */}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/dashboard/invoices"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
-          Cancel
+          Abbrechen
         </Link>
-        <Button type="submit">Edit Invoice</Button>
+        <Button type="submit">Bearbeite Abrechnung</Button>
       </div>
     </form>
   );

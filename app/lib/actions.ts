@@ -93,8 +93,10 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
   
     const validatedFields = UpdateInvoice.safeParse({
         customerId: formData.get('customerId'),
+        groupId: formData.get('groupId'),
+        dateId: formData.get('dateId'),
         amount: formData.get('amount'),
-        status: formData.get('status'),
+        part: formData.get('part'),
     });
 
     if (!validatedFields.success) {
@@ -105,14 +107,14 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     }
 
 
-    const { customerId, amount } = validatedFields.data;
-    const amountInCents = amount * 100;
-    const status = 'pending';
+    const { customerId, amount, groupId, part } = validatedFields.data;
+    //const amountInCents = amount * 100;
+    //const status = 'pending';
 
     try {
         await sql`
         UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+        SET customer_id = ${customerId}, amount = ${amount}, groupid=${groupId}, part=${part}
         WHERE id = ${id}
         `;
        
@@ -162,9 +164,7 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     const roleId = await fetchRoleId(sessionUserEmail);
     const approveId = await fetchApproveId(roleId, currentApproval);
 
-    if(currentApproval === approveId){
-      console.log('no change')
-    }else{
+    if(currentApproval !== approveId){
       try {
           
           await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;

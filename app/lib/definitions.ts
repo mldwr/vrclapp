@@ -92,7 +92,10 @@ export type InvoiceForm = {
   id: string;
   customer_id: string;
   amount: number;
+  part: number;
+  date: string;
   status: 'ausstehend' | 'geprüft' | 'genehmigt';
+  groupid: string;
 };
 
 export type GroupsTable = {

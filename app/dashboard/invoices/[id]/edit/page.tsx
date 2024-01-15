@@ -27,11 +27,11 @@ export default async function Page({ params }: { params: { id: string } }) {
       <Breadcrumbs
         breadcrumbs={[
           { label: 'Abrechnungen', href: '/dashboard/invoices' },
-          {
+          /* {
             label: 'Bearbeite Abrechnung',
             href: `/dashboard/invoices/${id}/edit`,
             active: true,
-          },
+          }, */
         ]}
       />
       <Form invoice={invoice} customers={filteredCustomers} groups={groups} />
