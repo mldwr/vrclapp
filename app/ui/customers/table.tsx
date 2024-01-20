@@ -10,8 +10,8 @@ export default async function CustomersTable({
 }) {
   return (
     <div className="w-full">
-      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>        Trainer      </h1> 
-      <Search placeholder="Suche Trainer..." />
+      <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>        Übungsleiter      </h1> 
+      <Search placeholder="Suche Übungsleiter..." />
       <div className="mt-6 flow-root">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
@@ -47,12 +47,12 @@ export default async function CustomersTable({
                         <p className="font-medium">{customer.total_pending}</p>
                       </div>
                       <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Genehmigt</p>
+                        <p className="text-xs">Geprüft</p>
                         <p className="font-medium">{customer.total_paid}</p>
                       </div>
                     </div>
                     <div className="pt-4 text-sm">
-                      <p>{customer.total_invoices} Abrechnungen</p>
+                      <p>{customer.total_invoices} Genehmigt</p>
                     </div>
                   </div>
                 ))}
@@ -67,10 +67,10 @@ export default async function CustomersTable({
                       Email
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Abrechnungen
+                      Ausstehend
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
-                      Ausstehend
+                      Geprüft
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
                       Genehmigt
