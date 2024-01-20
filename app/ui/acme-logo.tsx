@@ -8,7 +8,7 @@ export default function AcmeLogo() {
     >
       {/* <TrophyIcon className="h-12 w-12 rotate-[15deg]" /> */}
       {/* shrink-0 prevents the icon from shirnking, when the screens becomes smaller like on mobile */}
-      <TrophyIcon className="h-12 w-12 shrink-0" /> 
+      <TrophyIcon className="h-12 w-12 shrink-0" width="0"/> 
       <p className="text-[44px]">GWV</p>
     </div>
   );

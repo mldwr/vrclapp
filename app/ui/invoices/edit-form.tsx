@@ -14,9 +14,10 @@ import {
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { updateInvoice } from '@/app/lib/actions';
-import { useFormState } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
 
 export default function EditInvoiceForm({  invoice,  customers, groups, }: {  invoice: InvoiceForm;  customers: CustomerField[]; groups: SpartenTable[],}) {
+  const { pending } = useFormStatus();
 
   const initialState = { message: null, errors: {} };  
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
@@ -259,7 +260,7 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
         >
           Abbrechen
         </Link>
-        <Button type="submit">Bearbeite Abrechnung</Button>
+        <Button type="submit" aria-disabled={pending}>Bearbeite Abrechnung</Button>
       </div>
     </form>
   );
