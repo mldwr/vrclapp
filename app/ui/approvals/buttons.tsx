@@ -6,7 +6,8 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteInvoice, approveInvoice } from '@/app/lib/actions';
+import { deleteInvoice, approveInvoice, fetchApprovalRole } from '@/app/lib/actions';
+import { fetchRoleId } from '@/app/lib/data';
 import { InvoicesTable } from '@/app/lib/definitions';
 
 
@@ -34,15 +35,22 @@ export function DeleteInvoice({ id }: { id: string }) {
   );
 }
 
-export function ApproveInvoice({ id, invoices, sessionUserEmail }: { id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined }) {
+export async function ApproveInvoice({ id, invoices, sessionUserEmail }: { id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined }) {
 
+
+  // if the currentApproval equals the approve state of the role, then don't show the button
+  // currentApprovalRole === currentApproval
+  const roleId = await fetchRoleId(sessionUserEmail);
+  const currentApprovalRole = await fetchApprovalRole(roleId);
 
   // get current state of the invoice: approved ? don't show the button : show the button
   const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
 
-  if(currentApproval !== 'genehmigt'){
+  const enable = (currentApproval !== 'genehmigt') && (currentApproval !== currentApprovalRole);
 
-    const approveInvoiceWithId = approveInvoice.bind(null, id, currentApproval, sessionUserEmail);
+  if(enable){
+
+    const approveInvoiceWithId = approveInvoice.bind(null, id, currentApproval, roleId);
 
     return (
       <form action={approveInvoiceWithId}>

@@ -7,7 +7,6 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { InvoicesTable } from '@/app/lib/definitions';
-import { fetchRoleId } from '@/app/lib/data';
  
 const FormSchema = z.object({
   id: z.string(),
@@ -161,10 +160,9 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
   }
 
 
-  export async function approveInvoice(id: string, currentApproval: string, sessionUserEmail: string | null | undefined) {
+  export async function approveInvoice(id: string, currentApproval: string, roleId: string) {
     //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
 
-    const roleId = await fetchRoleId(sessionUserEmail);
     const approveId = await fetchApproveId(roleId, currentApproval);
 
     if(currentApproval !== approveId){
@@ -191,18 +189,13 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
   // Vorseitzender can only increase from geprüft to genehmigt
 export async function fetchApproveId(roleId: string, currentApproval: string){
 
-  const aprovalsRole: {[key: string]: string} = {
-    'Spartenleiter': 'geprüft',
-    'Vorsitzender': 'genehmigt',
-  };
-
   const aprovalsRank: {[key: string]: string} = {
     'ausstehend': '1',
     'geprüft': '2',
     'genehmigt': '3',
   };
 
-  const requestedApproval = aprovalsRole[roleId];
+  const requestedApproval = await fetchApprovalRole(roleId);
   const requestedApprovalRank = aprovalsRank[requestedApproval]
   const currentApprovalRank = aprovalsRank[currentApproval]
 
@@ -213,5 +206,18 @@ export async function fetchApproveId(roleId: string, currentApproval: string){
   }
 
   return currentApproval
+
+}
+
+export async function fetchApprovalRole(roleId: string){
+
+  const aprovalsRole: {[key: string]: string} = {
+    'Spartenleiter': 'geprüft',
+    'Vorsitzender': 'genehmigt',
+  };
+
+  const currentApprovalRole = aprovalsRole[roleId];
+
+  return currentApprovalRole
 
 }
