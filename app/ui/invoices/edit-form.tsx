@@ -17,23 +17,16 @@ import { updateInvoice } from '@/app/lib/actions';
 import { useFormState, useFormStatus } from 'react-dom';
 
 export default function EditInvoiceForm({  invoice,  customers, groups, }: {  invoice: InvoiceForm;  customers: CustomerField[]; groups: SpartenTable[],}) {
-  const { pending } = useFormStatus();
 
   const initialState = { message: null, errors: {} };  
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
   const [state, dispatch] = useFormState(updateInvoiceWithId, initialState);
-  //const formattedDate = new Date(invoice.date).toISOString().split('T')[0];
-  //const dateComponents = invoice.date.split('/');
+  
   const gmtDate = new Date(invoice.date);
   const year = gmtDate.getFullYear();
   const month= gmtDate.getMonth();
   const day = gmtDate.getDate();
-  console.log('gmtDate: ', gmtDate, year, month, day);
-  /*const originalDate = new Date(Date.UTC(`${dateComponents[2]}-${dateComponents[0]}-${dateComponents[1]}`));
-  const formattedDate = originalDate.toISOString().split('T')[0];
-  console.log('mydate: ',dateComponents, originalDate, formattedDate) */
   const formattedDate = new Date(Date.UTC(year,month,day)).toISOString().split('T')[0];
-  console.log('mydate: ',formattedDate);
 
   return (
     <form action={dispatch}>
@@ -260,8 +253,9 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
         >
           Abbrechen
         </Link>
-        <Button type="submit" aria-disabled={pending}>Bearbeite Abrechnung</Button>
+        <Button type="submit" >Bearbeite Abrechnung</Button>
       </div>
     </form>
   );
 }
+
