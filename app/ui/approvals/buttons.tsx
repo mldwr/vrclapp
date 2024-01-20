@@ -6,7 +6,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteInvoice, approveInvoice, fetchApprovalRole } from '@/app/lib/actions';
+import { deleteInvoice, approveInvoice, fetchApprovalRole, fetchApprovalRank } from '@/app/lib/actions';
 import { fetchRoleId } from '@/app/lib/data';
 import { InvoicesTable } from '@/app/lib/definitions';
 
@@ -38,19 +38,31 @@ export function DeleteInvoice({ id }: { id: string }) {
 export async function ApproveInvoice({ id, invoices, sessionUserEmail }: { id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined }) {
 
 
+  // get current state of the invoice: approved ? don't show the button : show the button
+  const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
+
   // if the currentApproval equals the approve state of the role, then don't show the button
   // currentApprovalRole === currentApproval
   const roleId = await fetchRoleId(sessionUserEmail);
   const currentApprovalRole = await fetchApprovalRole(roleId);
 
-  // get current state of the invoice: approved ? don't show the button : show the button
-  const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
+  // increase the state going from ausstehend to geprüft to genehmigt
+  // state depends on the role of the current user
+  // Übungsleiter can only increase from ausstehend to greprüft
+  // Vorseitzender can only increase from geprüft to genehmigt
+  const requestedApproval = await fetchApprovalRole(roleId);
+  const requestedApprovalRank = await fetchApprovalRank(requestedApproval);
+  const currentApprovalRank = await fetchApprovalRank(currentApproval);
 
-  const enable = (currentApproval !== 'genehmigt') && (currentApproval !== currentApprovalRole);
+  // jumping from ausstehend to genehmigt is not allowed
+  // also moving the rank down is not allowed
+  
+  const enable = (currentApproval !== 'genehmigt') && (currentApproval !== currentApprovalRole) && (requestedApprovalRank > currentApprovalRank) && (Math.abs(Number(requestedApprovalRank)-Number(currentApprovalRank))===1);
+
 
   if(enable){
 
-    const approveInvoiceWithId = approveInvoice.bind(null, id, currentApproval, roleId);
+    const approveInvoiceWithId = approveInvoice.bind(null, id, requestedApproval);
 
     return (
       <form action={approveInvoiceWithId}>

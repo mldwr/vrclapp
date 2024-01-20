@@ -6,7 +6,7 @@ import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchInvoicesPagesList, fetchFilteredSparten } from '@/app/lib/data';
 import { Metadata } from 'next';
-import { auth } from '@/app/../auth';
+import { auth, getUser } from '@/app/../auth';
 
 export const metadata: Metadata = {
   title: 'Approvals',
@@ -23,9 +23,14 @@ export default async function Page({
 
     let session = await auth();
     const sessionUserEmail = session?.user?.email ?? ''; 
+
+    //let sessionUser = await getUser(sessionUserEmail);
+    //const sessionRole = sessionUser?.role;
+    
+    // if the user has the role Vorsietzender, then he must see all invoices
     const sparten = await fetchFilteredSparten(sessionUserEmail)
 
-    const userEmail = [sparten[0].uebungsleiter_1email, sparten[0].uebungsleiter_2email,'',''];
+    const userEmail = [sparten[0].uebungsleiter_1email, sparten[0].uebungsleiter_2email,sparten[0].uebungsleiter_3email,''];
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;

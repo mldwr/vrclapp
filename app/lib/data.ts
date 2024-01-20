@@ -186,7 +186,7 @@ export async function fetchInvoicesPagesList(query: string, emailList: string[])
       customers.email ILIKE ${`%${query}%`} OR
       invoices.amount::text ILIKE ${`%${query}%`} OR
       invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`})AND
+      invoices.status ILIKE ${`%${query}%`}) AND
       customers.email in (${emailList[0]}, ${emailList[1]},${emailList[2]}, ${emailList[3]})
   `;
 
@@ -285,7 +285,8 @@ export async function fetchFilteredSparten( query: string) {
       ORDER BY sp.name ASC
     `;
 
-    const groups = data.rows;
+    //const groups = data.rows.length !== 0 ? data.rows : [{uebungsleiter_1email:'', uebungsleiter_2email: ''}] ;
+    const groups = [{uebungsleiter_1email:'daniela@gwv.de', uebungsleiter_2email:'kerstin@gwv.de', uebungsleiter_3email:'metin@gwv.de'}]
     return groups;
   } catch (err) {
     console.error('Database Error:', err);

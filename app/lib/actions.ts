@@ -160,20 +160,15 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
   }
 
 
-  export async function approveInvoice(id: string, currentApproval: string, roleId: string) {
+  export async function approveInvoice(id: string, approveId: string) {
     //throw new Error('Testing the Error Routine: Failed to Delete Invoice');
 
-    const approveId = await fetchApproveId(roleId, currentApproval);
-
-    if(currentApproval !== approveId){
-      try {
-          
-          await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
-      
-      } catch (error) {
-          return { message: 'Database Error: Failed to Approve Invoice.' };
-      }
-
+    try {
+        
+        await sql` UPDATE invoices set status = ${approveId} WHERE id = ${id} `;
+    
+    } catch (error) {
+        return { message: 'Database Error: Failed to Approve Invoice.' };
     }
     
     revalidatePath('/dashboard/invoices');
@@ -181,33 +176,6 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
    }
 
 
-
-
-  // increase the state going from ausstehend to geprüft to genehmigt
-  // state depends on the role of the current user
-  // Übungsleiter can only increase from ausstehend to greprüft
-  // Vorseitzender can only increase from geprüft to genehmigt
-export async function fetchApproveId(roleId: string, currentApproval: string){
-
-  const aprovalsRank: {[key: string]: string} = {
-    'ausstehend': '1',
-    'geprüft': '2',
-    'genehmigt': '3',
-  };
-
-  const requestedApproval = await fetchApprovalRole(roleId);
-  const requestedApprovalRank = aprovalsRank[requestedApproval]
-  const currentApprovalRank = aprovalsRank[currentApproval]
-
-  // jumping from ausstehend to genehmigt is not allowed
-  // also moving the rank down is not allowed
-  if(requestedApprovalRank > currentApprovalRank && Math.abs(Number(requestedApprovalRank)-Number(currentApprovalRank))===1){
-      return requestedApproval
-  }
-
-  return currentApproval
-
-}
 
 export async function fetchApprovalRole(roleId: string){
 
@@ -219,5 +187,19 @@ export async function fetchApprovalRole(roleId: string){
   const currentApprovalRole = aprovalsRole[roleId];
 
   return currentApprovalRole
+
+}
+
+export async function fetchApprovalRank(approval: string){
+
+  const aprovalsRank: {[key: string]: string} = {
+    'ausstehend': '1',
+    'geprüft': '2',
+    'genehmigt': '3',
+  };
+
+  const currentApprovalRank = aprovalsRank[approval];
+
+  return currentApprovalRank
 
 }
