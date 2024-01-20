@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomerField, InvoiceForm, GroupsTable } from '@/app/lib/definitions';
+import { CustomerField, InvoiceForm, SpartenTable } from '@/app/lib/definitions';
 import {
   CheckIcon,
   ClockIcon,
@@ -16,7 +16,7 @@ import { Button } from '@/app/ui/button';
 import { updateInvoice } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 
-export default function EditInvoiceForm({  invoice,  customers, groups, }: {  invoice: InvoiceForm;  customers: CustomerField[]; groups: GroupsTable[],}) {
+export default function EditInvoiceForm({  invoice,  customers, groups, }: {  invoice: InvoiceForm;  customers: CustomerField[]; groups: SpartenTable[],}) {
 
   const initialState = { message: null, errors: {} };  
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
@@ -89,8 +89,8 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
                 Wähle eine Gruppe
               </option>
               {groups.map((group) => (
-                <option key={group.name} value={group.name}>
-                  {group.name}
+                <option key={group.spartenname} value={group.spartenname}>
+                  {group.spartenname}
                 </option>
               ))}
             </select>

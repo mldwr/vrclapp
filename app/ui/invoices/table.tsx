@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
+import { formatDateToLocal } from '@/app/lib/utils';
 import { fetchFilteredInvoicesList } from '@/app/lib/data';
 
 export default async function InvoicesTable({
@@ -64,7 +64,7 @@ export default async function InvoicesTable({
                   Trainer
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Gruppe
+                  Sparten
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Teilnehmer

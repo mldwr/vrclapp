@@ -1,6 +1,6 @@
 import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchInvoiceById, fetchCustomers, fetchGroups } from '@/app/lib/data';
+import { fetchInvoiceById, fetchCustomers, fetchFilteredSparten } from '@/app/lib/data';
 import { auth } from '@/app/../auth';
 
 import { notFound } from 'next/navigation';
@@ -10,17 +10,17 @@ export default async function Page({ params }: { params: { id: string } }) {
   const authEmail = session?.user?.email ?? '';
 
   const id = params.id;
+  const query = ''
   const [invoice, customers, groups] = await Promise.all([
       fetchInvoiceById(id),
       fetchCustomers(),
-      fetchGroups(),
+      fetchFilteredSparten(query),
     ]);
     
   if (!invoice) {
     notFound();
   }
 
-  console.log('invoice: ',invoice)
   
   const filteredCustomers = customers.filter(customer => customer.email === authEmail);
 
