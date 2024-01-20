@@ -263,7 +263,10 @@ export async function fetchFilteredSparten( query: string) {
         sp.name as spartenname,
         sl.name as spartenleiter,
         ul1.name as uebungsleiter_1,
-        ul2.name as uebungsleiter_2
+        ul2.name as uebungsleiter_2,
+        sp.spartenleiter as spartenleiterEmail,
+        sp.uebungsleiter_1 as uebungsleiter_1Email,
+        sp.uebungsleiter_2 as uebungsleiter_2Email
       FROM sparten sp
       left join users sl
       on sp.spartenleiter = sl.email
@@ -275,7 +278,10 @@ export async function fetchFilteredSparten( query: string) {
       sp.name ILIKE ${`%${query}%`} OR
       sl.name ILIKE ${`%${query}%`} OR
       ul1.name ILIKE ${`%${query}%`} OR
-      ul2.name ILIKE ${`%${query}%`} 
+      ul2.name ILIKE ${`%${query}%`} OR
+      sp.spartenleiter  ILIKE ${`%${query}%`} OR
+      sp.uebungsleiter_1 ILIKE ${`%${query}%`} OR
+      sp.uebungsleiter_2 ILIKE ${`%${query}%`} 
       ORDER BY sp.name ASC
     `;
 

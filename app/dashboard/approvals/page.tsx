@@ -4,7 +4,7 @@ import Table from '@/app/ui/approvals/table';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInvoicesPagesList } from '@/app/lib/data';
+import { fetchInvoicesPagesList, fetchFilteredSparten } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { auth } from '@/app/../auth';
 
@@ -22,8 +22,10 @@ export default async function Page({
   }) {
 
     let session = await auth();
-    const sessionUserEmail = session?.user?.email;
-    const userEmail = ['daniela@gwv.de', 'kerstin@gwv.de','',''];
+    const sessionUserEmail = session?.user?.email ?? ''; 
+    const sparten = await fetchFilteredSparten(sessionUserEmail)
+
+    const userEmail = [sparten[0].uebungsleiter_1email, sparten[0].uebungsleiter_2email,'',''];
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
