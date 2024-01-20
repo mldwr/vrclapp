@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres';
 import {
-  GroupsTable,
+  SpartenTable,
   CustomerField,
   CustomersTable,
   InvoiceForm,
@@ -255,17 +255,28 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-export async function fetchGroups() {
+export async function fetchFilteredSparten( query: string) {
   noStore();
   try {
-    const data = await sql<GroupsTable>`
+    const data = await sql<SpartenTable>`
       SELECT
-        name,
-        spartenleiter,
-        uebungsleiter_1,
-        uebungsleiter_2
-      FROM sparten
-      ORDER BY name ASC
+        sp.name as spartenname,
+        sl.name as spartenleiter,
+        ul1.name as uebungsleiter_1,
+        ul2.name as uebungsleiter_2
+      FROM sparten sp
+      left join users sl
+      on sp.spartenleiter = sl.email
+      left join users ul1
+      on sp.uebungsleiter_1 = ul1.email
+      left join users ul2
+      on sp.uebungsleiter_2 = ul2.email
+      WHERE
+      sp.name ILIKE ${`%${query}%`} OR
+      sl.name ILIKE ${`%${query}%`} OR
+      ul1.name ILIKE ${`%${query}%`} OR
+      ul2.name ILIKE ${`%${query}%`} 
+      ORDER BY sp.name ASC
     `;
 
     const groups = data.rows;

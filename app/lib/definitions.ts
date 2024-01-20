@@ -98,8 +98,8 @@ export type InvoiceForm = {
   groupid: string;
 };
 
-export type GroupsTable = {
-  name: string;
+export type SpartenTable = {
+  spartenname: string;
   spartenleiter: string;
   uebungsleiter_1: string;
   uebungsleiter_2: string;

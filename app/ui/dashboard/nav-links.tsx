@@ -4,7 +4,8 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
-  UserCircleIcon
+  UserCircleIcon,
+  ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -16,8 +17,9 @@ import clsx from 'clsx';
 const links = [
   { name: 'Übersicht', href: '/dashboard', icon: HomeIcon },
   { name: 'Abrechnungen', href: '/dashboard/invoices', icon: DocumentDuplicateIcon, },
-  { name: 'Trainer', href: '/dashboard/customers', icon: UserCircleIcon },
+  { name: 'Übungsleiter', href: '/dashboard/customers', icon: UserCircleIcon },
   { name: 'Freigaben', href: '/dashboard/approvals', icon: UserGroupIcon },
+  { name: 'Sparten', href: '/dashboard/sparten', icon: ClipboardDocumentListIcon },
 ];
 
 export default function NavLinks() {
