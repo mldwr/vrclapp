@@ -228,20 +228,24 @@ export async function fetchInvoiceById(id: string) {
   noStore();
   try {
     const data = await sql<InvoiceForm>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status,
-        invoices.groupid
-      FROM invoices
+    SELECT
+    invoices.id,
+    invoices.customer_id,
+    invoices.amount,
+    invoices.part,
+    invoices.date,
+    invoices.status,
+    invoices.groupid
+  FROM invoices
       WHERE invoices.id = ${id};
     `;
+
 
     const invoice = data.rows.map((invoice) => ({
       ...invoice,
       // Convert amount from cents to dollars
       //amount: invoice.amount / 100,
+      //date: new Date(invoice.date).toLocaleDateString()
     }));
     
     // console.log(invoice)

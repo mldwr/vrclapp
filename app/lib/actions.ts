@@ -107,14 +107,17 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     }
 
 
-    const { customerId, amount, groupId, part } = validatedFields.data;
+    const { customerId, groupId, dateId, amount, part } = validatedFields.data;
     //const amountInCents = amount * 100;
     //const status = 'pending';
+
+    const isoString = dateId.toISOString();
+    //const formattedDate = isoString.split('T')[0];
 
     try {
         await sql`
         UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amount}, groupid=${groupId}, part=${part}
+        SET customer_id = ${customerId}, amount = ${amount}, groupid=${groupId}, part=${part}, date=${isoString}
         WHERE id = ${id}
         `;
        

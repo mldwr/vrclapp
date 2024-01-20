@@ -21,6 +21,18 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
   const initialState = { message: null, errors: {} };  
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
   const [state, dispatch] = useFormState(updateInvoiceWithId, initialState);
+  //const formattedDate = new Date(invoice.date).toISOString().split('T')[0];
+  //const dateComponents = invoice.date.split('/');
+  const gmtDate = new Date(invoice.date);
+  const year = gmtDate.getFullYear();
+  const month= gmtDate.getMonth();
+  const day = gmtDate.getDate();
+  console.log('gmtDate: ', gmtDate, year, month, day);
+  /*const originalDate = new Date(Date.UTC(`${dateComponents[2]}-${dateComponents[0]}-${dateComponents[1]}`));
+  const formattedDate = originalDate.toISOString().split('T')[0];
+  console.log('mydate: ',dateComponents, originalDate, formattedDate) */
+  const formattedDate = new Date(Date.UTC(year,month,day)).toISOString().split('T')[0];
+  console.log('mydate: ',formattedDate);
 
   return (
     <form action={dispatch}>
@@ -107,7 +119,7 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
                 name="dateId"
                 type="date"
                 placeholder="Wähle ein Datum"
-                defaultValue={invoice.date}
+                defaultValue={formattedDate}
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="invoice-error"
               />
