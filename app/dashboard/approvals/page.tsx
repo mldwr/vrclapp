@@ -6,8 +6,7 @@ import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchInvoicesPagesList, fetchFilteredSparten } from '@/app/lib/data';
 import { Metadata } from 'next';
-import { auth, getUser } from '@/app/../auth';
-import getSession from 'next-auth';
+import { auth } from '@/app/../auth';
 
 export const metadata: Metadata = {
   title: 'Approvals',
@@ -28,9 +27,8 @@ export default async function Page({
     //let sessionUser = await getUser(sessionUserEmail);
     //const sessionRole = sessionUser?.role;
     //const sessionRole = session?.user.
-    //const currentSession = await getSession();
 
-    //console.log('role: ', sessionRole, session?.user?.email)
+    console.log('role: ', session?.user?.image)
     
     // if the user has the role Vorsietzender, then he must see all invoices
     const sparten = await fetchFilteredSparten(sessionUserEmail)
