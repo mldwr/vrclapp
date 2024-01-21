@@ -7,6 +7,7 @@ import { Suspense } from 'react';
 import { fetchInvoicesPagesList, fetchFilteredSparten } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { auth, getUser } from '@/app/../auth';
+import getSession from 'next-auth';
 
 export const metadata: Metadata = {
   title: 'Approvals',
@@ -26,6 +27,8 @@ export default async function Page({
 
     //let sessionUser = await getUser(sessionUserEmail);
     //const sessionRole = sessionUser?.role;
+    //const sessionRole = session?.user.
+    //const currentSession = await getSession();
 
     //console.log('role: ', sessionRole, session?.user?.email)
     

@@ -355,7 +355,7 @@ export async function fetchFilteredCustomers(query: string) {
   }
 }
 
-export async function getUser(email: string) {
+/* export async function getUser(email: string) {
   try {
     const user = await sql`
     SELECT 
@@ -371,7 +371,7 @@ export async function getUser(email: string) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
   }
-}
+} */
 
 
 export async function fetchRoleId(sessionUserEmail: string | null | undefined){
