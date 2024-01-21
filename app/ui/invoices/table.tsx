@@ -7,13 +7,11 @@ import { fetchFilteredInvoicesList } from '@/app/lib/data';
 export default async function InvoicesTable({
   query,
   currentPage,
-  userEmail,
 }: {
   query: string;
   currentPage: number;
-  userEmail: string[];
 }) {
-  const invoices = await fetchFilteredInvoicesList(query, currentPage, userEmail);
+  const invoices = await fetchFilteredInvoicesList(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">

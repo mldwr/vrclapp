@@ -24,21 +24,16 @@ export default async function Page({
     let session = await auth();
     const sessionUserEmail = session?.user?.email ?? ''; 
 
-    //let sessionUser = await getUser(sessionUserEmail);
-    //const sessionRole = sessionUser?.role;
-    //const sessionRole = session?.user.
-
-    console.log('role: ', session?.user?.image)
+    // if role is Vorsitzender, get all invoices, that have the status 'geprüft'
+    // if role is Spartenleiter, get all invoices, from correspoinding Sparte and invoice status 'ausstehend'
     
     // if the user has the role Vorsietzender, then he must see all invoices
     const sparten = await fetchFilteredSparten(sessionUserEmail)
 
-    const userEmail = [sparten[0].uebungsleiter_1email, sparten[0].uebungsleiter_2email,'',''];
-
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-    const totalPages = await fetchInvoicesPagesList(query, userEmail);
+    const totalPages = await fetchInvoicesPagesList(query);
 
   return (
     <div className="w-full">
@@ -51,7 +46,7 @@ export default async function Page({
         <Search placeholder="Suche Abrechnungen..." />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} userEmail={userEmail} sessionUserEmail={sessionUserEmail}/>
+        <Table query={query} currentPage={currentPage} sessionUserEmail={sessionUserEmail}/>
       </Suspense> 
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
@@ -64,31 +59,4 @@ export default async function Page({
     return <p>Groups Page</p>;
 }  
 
-import { auth, signOut } from '@/app/../auth';
-
-export default async function Page() {
-  let session = await auth();
-
-  return (
-    <div className="flex h-screen bg-white">
-      <div className="w-screen h-screen flex flex-col space-y-5 justify-center items-center text-black">
-        <p>You are logged in as {session?.user?.email}</p>
-        <p>{session?.user?.name}</p>
-        <SignOut />
-      </div>
-    </div>
-  );
-}
-
-function SignOut() {
-  return (
-    <form
-      action={async () => {
-        'use server';
-        await signOut();
-      }}
-    >
-      <button type="submit">Sign out</button>
-    </form>
-  );
 }*/

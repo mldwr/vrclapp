@@ -7,15 +7,13 @@ import { fetchFilteredInvoicesList } from '@/app/lib/data';
 export default async function ApprovalsTable({
   query,
   currentPage,
-  userEmail,
   sessionUserEmail,
 }: {
   query: string;
   currentPage: number;
-  userEmail: string[];
   sessionUserEmail: string | null | undefined;
 }) {
-  const invoices = await fetchFilteredInvoicesList(query, currentPage, userEmail);
+  const invoices = await fetchFilteredInvoicesList(query, currentPage);
 
   return (
     <div className="mt-6 flow-root">

@@ -25,12 +25,11 @@ export default async function Page({
 
     let session = await auth();
     const sessionUserEmail = session?.user?.email ?? '';
-    const userEmail = [sessionUserEmail, '','',''];
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-    const totalPages = await fetchInvoicesPagesList(query, userEmail);
+    const totalPages = await fetchInvoicesPagesList(query);
 
   return (
     <div className="w-full">
@@ -44,7 +43,7 @@ export default async function Page({
         <CreateInvoice />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} userEmail={userEmail} />
+        <Table query={query} currentPage={currentPage} />
       </Suspense> 
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

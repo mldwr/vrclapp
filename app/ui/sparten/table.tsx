@@ -34,16 +34,6 @@ export default async function SpartenTable({
                         </p>
                       </div>
                     </div>
-                    <div className="flex w-full items-center justify-between border-b py-5">
-                      <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Ausstehend</p>
-                        <p className="font-medium">{sparte.uebungsleiter_1}</p>
-                      </div>
-                      <div className="flex w-1/2 flex-col">
-                        <p className="text-xs">Genehmigt</p>
-                        <p className="font-medium">{sparte.uebungsleiter_2}</p>
-                      </div>
-                    </div>
                   </div>
                 ))}
               </div>
@@ -55,12 +45,6 @@ export default async function SpartenTable({
                     </th>
                     <th scope="col" className="px-3 py-5 font-medium">
                       Spartenleiter
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                      Übungsleiter 1
-                    </th>
-                    <th scope="col" className="px-3 py-5 font-medium">
-                    Übungsleiter 2
                     </th>
                   </tr>
                 </thead>
@@ -75,12 +59,6 @@ export default async function SpartenTable({
                       </td>
                       <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
                         {sparte.spartenleiter}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {sparte.uebungsleiter_1}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {sparte.uebungsleiter_2}
                       </td>
                     </tr>
                   ))}

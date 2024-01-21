@@ -102,9 +102,5 @@ export type InvoiceForm = {
 export type SpartenTable = {
   spartenname: string;
   spartenleiter: string;
-  uebungsleiter_1: string;
-  uebungsleiter_2: string;
   spartenleiteremail: string;
-  uebungsleiter_1email: string;
-  uebungsleiter_2email: string;
 };
