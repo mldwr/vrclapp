@@ -26,11 +26,13 @@ export default async function Page({
 
     //let sessionUser = await getUser(sessionUserEmail);
     //const sessionRole = sessionUser?.role;
+
+    //console.log('role: ', sessionRole, session?.user?.email)
     
     // if the user has the role Vorsietzender, then he must see all invoices
     const sparten = await fetchFilteredSparten(sessionUserEmail)
 
-    const userEmail = [sparten[0].uebungsleiter_1email, sparten[0].uebungsleiter_2email,sparten[0].uebungsleiter_3email,''];
+    const userEmail = [sparten[0].uebungsleiter_1email, sparten[0].uebungsleiter_2email,'',''];
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;

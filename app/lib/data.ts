@@ -285,8 +285,15 @@ export async function fetchFilteredSparten( query: string) {
       ORDER BY sp.name ASC
     `;
 
-    //const groups = data.rows.length !== 0 ? data.rows : [{uebungsleiter_1email:'', uebungsleiter_2email: ''}] ;
-    const groups = [{uebungsleiter_1email:'daniela@gwv.de', uebungsleiter_2email:'kerstin@gwv.de', uebungsleiter_3email:'metin@gwv.de'}]
+    const groups = data.rows.length !== 0 ? data.rows : [{
+      spartenname: '',
+      spartenleiter: '',
+      uebungsleiter_1: '',
+      uebungsleiter_2: '',
+      spartenleiteremail: '',
+      uebungsleiter_1email:'', 
+      uebungsleiter_2email: ''}] ;
+    //const groups = data.rows;
     return groups;
   } catch (err) {
     console.error('Database Error:', err);
@@ -350,7 +357,15 @@ export async function fetchFilteredCustomers(query: string) {
 
 export async function getUser(email: string) {
   try {
-    const user = await sql`SELECT * from USERS where email=${email}`;
+    const user = await sql`
+    SELECT 
+          id, 
+          name, 
+          email, 
+          password, 
+          role 
+    from USERS 
+          where email=${email}`;
     return user.rows[0] as User;
   } catch (error) {
     console.error('Failed to fetch user:', error);

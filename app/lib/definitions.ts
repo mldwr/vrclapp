@@ -6,8 +6,8 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role: string;
   password: string;
+  role: string;
 };
 
 export type Customer = {
