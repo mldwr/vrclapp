@@ -132,7 +132,7 @@ export async function fetchFilteredInvoices( query: string, currentPage: number)
 }
 
 
-export async function fetchFilteredInvoicesList( query: string, currentPage: number) {
+export async function fetchFilteredInvoicesList( query: string, currentPage: number, sessionUserEmail: string) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -153,11 +153,12 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       WHERE
-        customers.name ILIKE ${`%${query}%`} OR
+        (customers.name ILIKE ${`%${query}%`} OR
         customers.email ILIKE ${`%${query}%`} OR
         invoices.amount::text ILIKE ${`%${query}%`} OR
         invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
+        invoices.status ILIKE ${`%${query}%`}) AND
+        customers.email ILIKE ${`%${sessionUserEmail}%`}
       ORDER BY invoices.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
@@ -170,8 +171,9 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
   }
 }
 
-export async function fetchInvoicesPagesList(query: string) {
+export async function fetchInvoicesPagesList(query: string, sessionUserEmail: string) {
   noStore();
+
   
   try {
     const count = await sql`
@@ -179,11 +181,12 @@ export async function fetchInvoicesPagesList(query: string) {
     FROM invoices
     JOIN customers ON invoices.customer_id = customers.id
     WHERE
-      customers.name ILIKE ${`%${query}%`} OR
+      (customers.name ILIKE ${`%${query}%`} OR
       customers.email ILIKE ${`%${query}%`} OR
       invoices.amount::text ILIKE ${`%${query}%`} OR
       invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
+      invoices.status ILIKE ${`%${query}%`}) AND
+      customers.email ILIKE ${`%${sessionUserEmail}%`}
   `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);

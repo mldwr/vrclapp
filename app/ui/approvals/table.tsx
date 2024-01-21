@@ -11,9 +11,9 @@ export default async function ApprovalsTable({
 }: {
   query: string;
   currentPage: number;
-  sessionUserEmail: string | null | undefined;
+  sessionUserEmail: string;
 }) {
-  const invoices = await fetchFilteredInvoicesList(query, currentPage);
+  const invoices = await fetchFilteredInvoicesList(query, currentPage, sessionUserEmail);
 
   return (
     <div className="mt-6 flow-root">
