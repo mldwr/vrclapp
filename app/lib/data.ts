@@ -153,12 +153,16 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       WHERE
-        (customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}) AND
-        customers.email ILIKE ${`%${sessionUserEmail}%`}
+        (
+          customers.name ILIKE ${`%${query}%`} OR
+          customers.email ILIKE ${`%${query}%`} OR
+          invoices.amount::text ILIKE ${`%${query}%`} OR
+          invoices.date::text ILIKE ${`%${query}%`} OR
+          invoices.status ILIKE ${`%${query}%`}
+        ) AND
+        (
+          customers.email ILIKE ${`%${sessionUserEmail}%`} 
+        )
       ORDER BY invoices.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
@@ -171,6 +175,52 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
   }
 }
 
+
+export async function fetchFilteredApprovalsList( query: string, currentPage: number, sparte: string) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+       
+    const invoices = await sql<InvoicesTable>`
+    SELECT
+        invoices.id,
+        invoices.amount,
+        invoices.part,
+        invoices.date,
+        invoices.status,
+        customers.name,
+        customers.email,
+        customers.image_url,
+        invoices.groupid
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        (
+          customers.name ILIKE ${`%${query}%`} OR
+          customers.email ILIKE ${`%${query}%`} OR
+          invoices.amount::text ILIKE ${`%${query}%`} OR
+          invoices.date::text ILIKE ${`%${query}%`} OR
+          invoices.status ILIKE ${`%${query}%`}
+        ) AND
+        (
+          invoices.groupid ILIKE ${`%${sparte}%`} 
+        )
+      ORDER BY invoices.date DESC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+
+    return invoices.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoices.');
+  }
+}
+
+
+
 export async function fetchInvoicesPagesList(query: string, sessionUserEmail: string) {
   noStore();
 
@@ -181,12 +231,46 @@ export async function fetchInvoicesPagesList(query: string, sessionUserEmail: st
     FROM invoices
     JOIN customers ON invoices.customer_id = customers.id
     WHERE
-      (customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}) AND
-      customers.email ILIKE ${`%${sessionUserEmail}%`}
+      (
+        customers.name ILIKE ${`%${query}%`} OR
+        customers.email ILIKE ${`%${query}%`} OR
+        invoices.amount::text ILIKE ${`%${query}%`} OR
+        invoices.date::text ILIKE ${`%${query}%`} OR
+        invoices.status ILIKE ${`%${query}%`}
+      ) AND
+      (
+        customers.email ILIKE ${`%${sessionUserEmail}%`} 
+      )
+  `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of invoices.');
+  }
+}
+
+export async function fetchApprovalsPagesList(query: string, sparte: string) {
+  noStore();
+
+  
+  try {
+    const count = await sql`
+    SELECT COUNT(*)
+    FROM invoices
+    JOIN customers ON invoices.customer_id = customers.id
+    WHERE
+      (
+        customers.name ILIKE ${`%${query}%`} OR
+        customers.email ILIKE ${`%${query}%`} OR
+        invoices.amount::text ILIKE ${`%${query}%`} OR
+        invoices.date::text ILIKE ${`%${query}%`} OR
+        invoices.status ILIKE ${`%${query}%`}
+      ) AND
+      (
+        invoices.groupid ILIKE ${`%${sparte}%`} 
+      )
   `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);

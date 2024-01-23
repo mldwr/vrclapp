@@ -4,7 +4,7 @@ import Table from '@/app/ui/approvals/table';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInvoicesPagesList, fetchFilteredSparten } from '@/app/lib/data';
+import { fetchApprovalsPagesList, fetchFilteredSparten } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { auth } from '@/app/../auth';
 
@@ -29,11 +29,14 @@ export default async function Page({
     
     // if the user has the role Vorsietzender, then he must see all invoices
     const sparten = await fetchFilteredSparten(sessionUserEmail)
+    const sparte = sparten[0].spartenname
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-    const totalPages = await fetchInvoicesPagesList(query, sessionUserEmail);
+    const totalPages = await fetchApprovalsPagesList(query, sparte);
+
+    console.log('sparte: ', sparte, totalPages)
 
   return (
     <div className="w-full">
@@ -46,7 +49,7 @@ export default async function Page({
         <Search placeholder="Suche Abrechnungen..." />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} sessionUserEmail={sessionUserEmail}/>
+        <Table query={query} currentPage={currentPage} sessionUserEmail={sessionUserEmail} sparte={sparte}/>
       </Suspense> 
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

@@ -2,18 +2,20 @@ import Image from 'next/image';
 import { UpdateInvoice, DeleteInvoice, ApproveInvoice } from '@/app/ui/approvals/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredInvoicesList } from '@/app/lib/data';
+import { fetchFilteredApprovalsList } from '@/app/lib/data';
 
 export default async function ApprovalsTable({
   query,
   currentPage,
   sessionUserEmail,
+  sparte,
 }: {
   query: string;
   currentPage: number;
   sessionUserEmail: string;
+  sparte: string;
 }) {
-  const invoices = await fetchFilteredInvoicesList(query, currentPage, sessionUserEmail);
+  const invoices = await fetchFilteredApprovalsList(query, currentPage, sparte);
 
   return (
     <div className="mt-6 flow-root">
@@ -62,10 +64,10 @@ export default async function ApprovalsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Trainer
+                  Übungsleiter
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Gruppe
+                  Sparten
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Teilnehmer
@@ -107,7 +109,7 @@ export default async function ApprovalsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {/* {formatCurrency(invoice.amount)} */}
-                    {invoice.amount}
+                    {invoice.part}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {/* {formatCurrency(invoice.amount)} */}
