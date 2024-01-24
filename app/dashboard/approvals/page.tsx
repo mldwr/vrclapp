@@ -26,8 +26,7 @@ export default async function Page({
 
     // if role is Vorsitzender, get all invoices, that have the status 'geprüft'
     // if role is Spartenleiter, get all invoices, from correspoinding Sparte and invoice status 'ausstehend'
-    
-    // if the user has the role Vorsietzender, then he must see all invoices
+
     const sparten = await fetchFilteredSparten(sessionUserEmail)
     const sparte = sparten[0].spartenname
 
@@ -35,8 +34,6 @@ export default async function Page({
     const currentPage = Number(searchParams?.page) || 1;
 
     const totalPages = await fetchApprovalsPagesList(query, sparte);
-
-    console.log('sparte: ', sparte, totalPages)
 
   return (
     <div className="w-full">
