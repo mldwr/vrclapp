@@ -174,32 +174,3 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     revalidatePath('/dashboard/invoices');
    
    }
-
-
-
-export async function fetchApprovalRole(roleId: string){
-
-  const aprovalsRole: {[key: string]: string} = {
-    'Spartenleiter': 'geprüft',
-    'Vorsitzender': 'genehmigt',
-  };
-
-  const currentApprovalRole = aprovalsRole[roleId];
-
-  return currentApprovalRole
-
-}
-
-export async function fetchApprovalRank(approval: string){
-
-  const aprovalsRank: {[key: string]: string} = {
-    'ausstehend': '1',
-    'geprüft': '2',
-    'genehmigt': '3',
-  };
-
-  const currentApprovalRank = aprovalsRank[approval];
-
-  return currentApprovalRank
-
-}

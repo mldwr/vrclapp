@@ -6,8 +6,11 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteInvoice, approveInvoice, fetchApprovalRole, fetchApprovalRank } from '@/app/lib/actions';
-import { fetchRoleId } from '@/app/lib/data';
+import { 
+  deleteInvoice, 
+  approveInvoice
+} from '@/app/lib/actions';
+//import { fetchRoleId } from '@/app/lib/data';
 import { InvoicesTable } from '@/app/lib/definitions';
 
 
@@ -35,30 +38,39 @@ export function DeleteInvoice({ id }: { id: string }) {
   );
 }
 
-export async function ApproveInvoice({ id, invoices, sessionUserEmail }: { id: string, invoices: InvoicesTable[], sessionUserEmail: string | null | undefined }) {
+export async function ApproveInvoice(
+{ 
+  id, 
+  invoices, 
+  sparteUser,
+  sessionUserRole
+}: { 
+  id: string, 
+  invoices: InvoicesTable[], 
+  sparteUser: string,
+  sessionUserRole: string
+}
+  ) {
 
 
   // get current state of the invoice: approved ? don't show the button : show the button
-  const currentApproval = invoices.find(invoice => invoice.id === id)?.status || 'ausstehend';
+  const currentApproval = invoices.find(invoice => invoice.id === id)?.status || '';
+  // get the current division (sparte)
+  const currentSparte = invoices.find(invoice => invoice.id === id)?.groupid || '';
 
-  // if the currentApproval equals the approve state of the role, then don't show the button
-  // currentApprovalRole === currentApproval
-  const roleId = await fetchRoleId(sessionUserEmail);
-  const currentApprovalRole = await fetchApprovalRole(roleId);
 
-  // increase the state going from ausstehend to geprüft to genehmigt
-  // state depends on the role of the current user
-  // Übungsleiter can only increase from ausstehend to greprüft
-  // Vorseitzender can only increase from geprüft to genehmigt
-  const requestedApproval = await fetchApprovalRole(roleId);
-  const requestedApprovalRank = await fetchApprovalRank(requestedApproval);
-  const currentApprovalRank = await fetchApprovalRank(currentApproval);
+  // approval can move from status 'ausstehend' to 'geprüft' to 'genehmigt'
+  const aprovals: {[key: string]: string} = {
+    'ausstehend': 'geprüft',
+    'geprüft': 'genehmigt',
+  };
+  const requestedApproval = aprovals[currentApproval];
 
-  // jumping from ausstehend to genehmigt is not allowed
-  // also moving the rank down is not allowed
-  
-  const enable = (currentApproval !== 'genehmigt') && (currentApproval !== currentApprovalRole) && (requestedApprovalRank > currentApprovalRank) && (Math.abs(Number(requestedApprovalRank)-Number(currentApprovalRank))===1);
-
+  // if user has the role 'Vorstand' then check also if the user has the role 'Spartenleiter'
+  const enableL1 = (currentApproval === 'ausstehend') && (currentSparte === sparteUser)
+  const enableL2 = (currentApproval === 'geprüft') && (sessionUserRole === 'Vorsitzender')
+  const enableL3 = (currentApproval !== 'genehmigt')
+  const enable = enableL3 && (enableL1 || enableL2)
 
   if(enable){
 

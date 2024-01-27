@@ -4,7 +4,14 @@ import Table from '@/app/ui/approvals/table';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchApprovalsPagesList, fetchFilteredSparten } from '@/app/lib/data';
+import { 
+  fetchInvoicesApprovePagesSparte, 
+  fetchInvoicesApprovePagesUser, 
+  fetchInvoicesPages, 
+  fetchSparten,
+  fetchInvoicesApproveListSparte,
+  fetchInvoicesApproveList
+} from '@/app/lib/data';
 import { Metadata } from 'next';
 import { auth } from '@/app/../auth';
 
@@ -23,17 +30,30 @@ export default async function Page({
 
     let session = await auth();
     const sessionUserEmail = session?.user?.email ?? ''; 
+    const sessionUserRole = session?.user?.image ?? ''; 
 
     // if role is Vorsitzender, get all invoices, that have the status 'geprüft'
     // if role is Spartenleiter, get all invoices, from correspoinding Sparte and invoice status 'ausstehend'
 
-    const sparten = await fetchFilteredSparten(sessionUserEmail)
-    const sparte = sparten[0].spartenname
+    const sparten = await fetchSparten(sessionUserEmail)
+    const sparteUser = sparten[0].spartenname
 
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-    const totalPages = await fetchApprovalsPagesList(query, sparte);
+    //const totalPages = await fetchApprovalsPagesList(query, sparte);
+
+    let totalPages = 0;
+    let invoices;
+    if(sessionUserRole === 'Vorsitzender'){
+      totalPages = await fetchInvoicesPages(query);
+      invoices = await fetchInvoicesApproveList(query, currentPage);
+    }else if(sessionUserRole === 'Uebungsleiter') {
+      totalPages = await fetchInvoicesApprovePagesUser(query,sessionUserEmail);
+    }else {
+      totalPages = await fetchInvoicesApprovePagesSparte(query,sparteUser);
+      invoices = await fetchInvoicesApproveListSparte(query, currentPage, sparteUser);
+    }
 
   return (
     <div className="w-full">
@@ -46,7 +66,7 @@ export default async function Page({
         <Search placeholder="Suche Abrechnungen..." />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} sessionUserEmail={sessionUserEmail} sparte={sparte}/>
+        <Table invoices={invoices} sparteUser={sparteUser} sessionUserRole={sessionUserRole}/>
       </Suspense> 
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

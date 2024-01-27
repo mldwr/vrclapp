@@ -5,7 +5,7 @@ import { CreateInvoice } from '@/app/ui/invoices/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInvoicesPagesList } from '@/app/lib/data';
+import { fetchInvoicesPagesUser } from '@/app/lib/data';
 import { Metadata } from 'next';
 import { auth } from '@/app/../auth';
 
@@ -29,7 +29,7 @@ export default async function Page({
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
 
-    const totalPages = await fetchInvoicesPagesList(query, sessionUserEmail);
+    const totalPages = await fetchInvoicesPagesUser(query, sessionUserEmail);
 
   return (
     <div className="w-full">

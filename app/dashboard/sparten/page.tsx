@@ -1,4 +1,4 @@
-import { fetchFilteredSparten } from '@/app/lib/data';
+import { fetchSparten } from '@/app/lib/data';
 import SpartenTable from '@/app/ui/sparten/table';
 import { Metadata } from 'next';
 
@@ -16,7 +16,7 @@ export default async function Page({
 }) {
   const query = searchParams?.query || '';
 
-  const sparten = await fetchFilteredSparten(query);
+  const sparten = await fetchSparten(query);
 
   return (
     <main>

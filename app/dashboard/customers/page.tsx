@@ -1,4 +1,4 @@
-import { fetchFilteredCustomers, fetchFilteredCustomersSparten,fetchFilteredCustomersUser, fetchFilteredSparten } from '@/app/lib/data';
+import { fetchFilteredCustomers, fetchFilteredCustomersSparten,fetchFilteredCustomersUser, fetchSparten } from '@/app/lib/data';
 import CustomersTable from '@/app/ui/customers/table';
 import { Metadata } from 'next';
 import { auth } from '@/app/../auth';
@@ -18,8 +18,8 @@ export default async function Page({
   let session = await auth();
   const sessionUserEmail = session?.user?.email ?? ''; 
   const sessionUserRole = session?.user?.image ?? ''; 
-  console.log('role: ', sessionUserRole)
-  const sparten = await fetchFilteredSparten(sessionUserEmail)
+
+  const sparten = await fetchSparten(sessionUserEmail)
   const sparte = sparten[0].spartenname
   // if user is Spartenleiter, then he shall see all Uebungsleiter via the Sparten table
   // if user is Uebungsleiter, then he shall see only himself

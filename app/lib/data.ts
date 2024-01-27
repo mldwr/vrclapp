@@ -38,6 +38,7 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   noStore();
+  
   try {
     // REMOVE TODO 
     //await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -59,6 +60,7 @@ export async function fetchLatestInvoices() {
 
 export async function fetchCardData() {
   noStore();
+
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -93,8 +95,9 @@ export async function fetchCardData() {
   }
 }
 
+
 const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices( query: string, currentPage: number) {
+/*export async function fetchFilteredInvoices( query: string, currentPage: number) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -129,10 +132,10 @@ export async function fetchFilteredInvoices( query: string, currentPage: number)
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoices.');
   }
-}
+}*/
 
 
-export async function fetchFilteredInvoicesList( query: string, currentPage: number, sessionUserEmail: string) {
+export async function fetchInvoicesUser( query: string, currentPage: number, sessionUserEmail: string) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -176,7 +179,8 @@ export async function fetchFilteredInvoicesList( query: string, currentPage: num
 }
 
 
-export async function fetchFilteredApprovalsList( query: string, currentPage: number, sparte: string) {
+
+export async function fetchInvoicesApproveList( query: string, currentPage: number) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -202,12 +206,11 @@ export async function fetchFilteredApprovalsList( query: string, currentPage: nu
           customers.email ILIKE ${`%${query}%`} OR
           invoices.amount::text ILIKE ${`%${query}%`} OR
           invoices.date::text ILIKE ${`%${query}%`} OR
-          invoices.status ILIKE ${`%${query}%`}
-        ) AND
-        (
-          invoices.groupid ILIKE ${`%${sparte}%`} 
-        )
-      ORDER BY invoices.date DESC
+          invoices.status ILIKE ${`%${query}%`} OR
+          invoices.groupid ILIKE ${`%${query}%`}
+        ) 
+        ORDER BY invoices.date DESC
+        --order by invoices.status DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -221,10 +224,119 @@ export async function fetchFilteredApprovalsList( query: string, currentPage: nu
 
 
 
-export async function fetchInvoicesPagesList(query: string, sessionUserEmail: string) {
+export async function fetchInvoicesApproveListSparte( query: string, currentPage: number, sparte: string) {
   noStore();
 
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+       
+    const invoices = await sql<InvoicesTable>`
+    SELECT
+        invoices.id,
+        invoices.amount,
+        invoices.part,
+        invoices.date,
+        invoices.status,
+        customers.name,
+        customers.email,
+        customers.image_url,
+        invoices.groupid
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        (
+          customers.name ILIKE ${`%${query}%`} OR
+          customers.email ILIKE ${`%${query}%`} OR
+          invoices.amount::text ILIKE ${`%${query}%`} OR
+          invoices.date::text ILIKE ${`%${query}%`} OR
+          invoices.status ILIKE ${`%${query}%`} OR
+          invoices.groupid ILIKE ${`%${query}%`}
+        ) AND
+        (
+          invoices.groupid ILIKE ${`%${sparte}%`} --AND
+          --invoices.status = 'ausstehend'
+        )
+      ORDER BY invoices.date DESC
+      --order by invoices.status
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+
+    return invoices.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoices.');
+  }
+}
+
+
+export async function fetchInvoicesApprovePagesSparte(query: string, sparte: string) {
+    noStore();
+    
+    try {
+      const count = await sql`
+      SELECT COUNT(*)
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        (
+          customers.name ILIKE ${`%${query}%`} OR
+          customers.email ILIKE ${`%${query}%`} OR
+          invoices.amount::text ILIKE ${`%${query}%`} OR
+          invoices.date::text ILIKE ${`%${query}%`} OR
+          invoices.status ILIKE ${`%${query}%`}
+        ) AND
+        (
+          invoices.groupid ILIKE ${`%${sparte}%`} --AND
+          --invoices.status = 'ausstehend'
+        )
+    `;
   
+      const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+      return totalPages;
+    } catch (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch total number of invoices.');
+    }
+  }
+  
+
+  export async function fetchInvoicesApprovePagesUser(query: string, sessionUserEmail: string) {
+    noStore();
+    
+    try {
+      const count = await sql`
+      SELECT COUNT(*)
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        (
+          customers.name ILIKE ${`%${query}%`} OR
+          customers.email ILIKE ${`%${query}%`} OR
+          invoices.amount::text ILIKE ${`%${query}%`} OR
+          invoices.date::text ILIKE ${`%${query}%`} OR
+          invoices.status ILIKE ${`%${query}%`}
+        ) AND
+        (
+          customers.email ILIKE ${`%${sessionUserEmail}%`} 
+        )
+    `;
+  
+      const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+      return totalPages;
+    } catch (error) {
+      console.error('Database Error:', error);
+      throw new Error('Failed to fetch total number of invoices.');
+    }
+  }
+
+
+  
+
+export async function fetchInvoicesPagesUser(query: string, sessionUserEmail: string) {
+  noStore();
+
   try {
     const count = await sql`
     SELECT COUNT(*)
@@ -251,35 +363,6 @@ export async function fetchInvoicesPagesList(query: string, sessionUserEmail: st
   }
 }
 
-export async function fetchApprovalsPagesList(query: string, sparte: string) {
-  noStore();
-
-  
-  try {
-    const count = await sql`
-    SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      (
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ) AND
-      (
-        invoices.groupid ILIKE ${`%${sparte}%`} 
-      )
-  `;
-
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
-  }
-}
 
 export async function fetchInvoicesPages(query: string) {
   noStore();
@@ -338,7 +421,7 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-export async function fetchFilteredSparten( query: string) {
+export async function fetchSparten( query: string) {
   noStore();
   try {
     const data = await sql<SpartenTable>`
@@ -520,7 +603,7 @@ export async function fetchFilteredCustomersSparten(query: string, sparte: strin
 } */
 
 
-export async function fetchRoleId(sessionUserEmail: string | null | undefined){
+/*export async function fetchRoleId(sessionUserEmail: string | null | undefined){
   noStore();
 
   try{
@@ -536,4 +619,4 @@ export async function fetchRoleId(sessionUserEmail: string | null | undefined){
     console.error('Database Error:', error);
     throw new Error('Failed to fetch approveId.');
   }
-}
+}*/

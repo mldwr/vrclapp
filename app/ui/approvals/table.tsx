@@ -2,20 +2,19 @@ import Image from 'next/image';
 import { UpdateInvoice, DeleteInvoice, ApproveInvoice } from '@/app/ui/approvals/buttons';
 import InvoiceStatus from '@/app/ui/invoices/status';
 import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredApprovalsList } from '@/app/lib/data';
+import { InvoicesTable } from '@/app/lib/definitions';
 
 export default async function ApprovalsTable({
-  query,
-  currentPage,
-  sessionUserEmail,
-  sparte,
+  invoices,
+  sparteUser,
+  sessionUserRole
 }: {
-  query: string;
-  currentPage: number;
-  sessionUserEmail: string;
-  sparte: string;
+  invoices: InvoicesTable[] | undefined;
+  sparteUser: string;
+  sessionUserRole: string;
 }) {
-  const invoices = await fetchFilteredApprovalsList(query, currentPage, sparte);
+  
+  //const invoices = await fetchInvoicesApproveListSparte(query, currentPage, sparte);
 
   return (
     <div className="mt-6 flow-root">
@@ -52,7 +51,7 @@ export default async function ApprovalsTable({
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <ApproveInvoice id={invoice.id} invoices={invoices} sessionUserEmail={sessionUserEmail}/>
+                    <ApproveInvoice id={invoice.id} invoices={invoices} sparteUser={sparteUser} sessionUserRole={sessionUserRole}/>
                     <UpdateInvoice id={invoice.id} />
                     <DeleteInvoice id={invoice.id} />
                   </div>
@@ -123,7 +122,7 @@ export default async function ApprovalsTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <ApproveInvoice id={invoice.id} invoices={invoices} sessionUserEmail={sessionUserEmail} />
+                      <ApproveInvoice id={invoice.id} invoices={invoices} sparteUser={sparteUser} sessionUserRole={sessionUserRole}/>
                       {/* <UpdateInvoice id={invoice.id} />
                       <DeleteInvoice id={invoice.id} /> */}
                     </div>

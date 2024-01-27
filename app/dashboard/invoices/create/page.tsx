@@ -1,6 +1,6 @@
 import Form from '@/app/ui/invoices/create-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchCustomers, fetchFilteredSparten } from '@/app/lib/data';
+import { fetchCustomers, fetchSparten } from '@/app/lib/data';
 import { auth } from '@/app/../auth';
  
 export default async function Page() {
@@ -9,7 +9,7 @@ export default async function Page() {
   const query = '';
 
   const customers = await fetchCustomers();
-  const groups = await fetchFilteredSparten(query);
+  const groups = await fetchSparten(query);
 
   const filteredCustomers = customers.filter(customer => customer.email === authEmail);
  
