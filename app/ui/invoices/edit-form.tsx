@@ -253,9 +253,20 @@ export default function EditInvoiceForm({  invoice,  customers, groups, }: {  in
         >
           Abbrechen
         </Link>
-        <Button type="submit" >Bearbeite Abrechnung</Button>
+        {/*<Button type="submit" >Bearbeite Abrechnung</Button>*/}
+        <UpdateInvoiceButton />
       </div>
     </form>
   );
 }
 
+
+function UpdateInvoiceButton() {
+  const { pending } = useFormStatus();
+ 
+  return (
+    <Button aria-disabled={pending} >
+      Bearbeite Abrechnung 
+    </Button>
+  );
+}

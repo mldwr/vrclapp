@@ -14,7 +14,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { createInvoice } from '@/app/lib/actions';
-import { useFormState } from 'react-dom';
+import { useFormState, useFormStatus } from 'react-dom';
+import React, { useState } from 'react';
 
 export default function Form({ customers, groups, }: { customers: CustomerField[], groups: SpartenTable[], }) {
   
@@ -257,8 +258,21 @@ export default function Form({ customers, groups, }: { customers: CustomerField[
         >
           Abbrechen
         </Link>
-        <Button type="submit"  >Erstelle Abrechnung</Button>
+        {/*<Button type="submit"  >Erstelle Abrechnung</Button>*/}
+        <CreateInvoiceButton />
       </div>
+
     </form>
+  );
+}
+
+
+function CreateInvoiceButton() {
+  const { pending } = useFormStatus();
+ 
+  return (
+    <Button aria-disabled={pending} >
+      Erstelle Abrechnung 
+    </Button>
   );
 }
