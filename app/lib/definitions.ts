@@ -64,9 +64,9 @@ export type CustomersTable = {
   name: string;
   email: string;
   image_url: string;
-  total_invoices: number;
-  total_pending: number;
-  total_paid: number;
+  total_ausstehend: number;
+  total_geprueft: number;
+  total_genehmigt: number;
 };
 
 export type FormattedCustomersTable = {
@@ -74,9 +74,9 @@ export type FormattedCustomersTable = {
   name: string;
   email: string;
   image_url: string;
-  total_invoices: number;
-  total_pending: number;
-  total_paid: number;
+  total_ausstehend: number;
+  total_geprueft: number;
+  total_genehmigt: number;
   // the FormattedCustomersTable was used to hold the currency format.
   // see data.ts and fetchFilteredCustomers
   // total_pending: string;

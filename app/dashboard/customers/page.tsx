@@ -1,4 +1,9 @@
-import { fetchFilteredCustomers, fetchFilteredCustomersSparten,fetchFilteredCustomersUser, fetchSparten } from '@/app/lib/data';
+import { 
+  fetchFilteredCustomers, 
+  fetchFilteredCustomersSparten,
+  fetchFilteredCustomersUser, 
+  fetchSparten 
+} from '@/app/lib/data';
 import CustomersTable from '@/app/ui/customers/table';
 import { Metadata } from 'next';
 import { auth } from '@/app/../auth';
@@ -18,6 +23,7 @@ export default async function Page({
   let session = await auth();
   const sessionUserEmail = session?.user?.email ?? ''; 
   const sessionUserRole = session?.user?.image ?? ''; 
+  console.log('sessionUserRole ', sessionUserRole)
 
   const sparten = await fetchSparten(sessionUserEmail)
   const sparte = sparten[0].spartenname
@@ -34,7 +40,9 @@ export default async function Page({
     customers = await fetchFilteredCustomersUser(query,sessionUserEmail);
   }else {
     customers = await fetchFilteredCustomersSparten(query,sparte)
+    console.log('customers: ',customers)
   }
+
   
 
   return (

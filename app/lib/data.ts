@@ -483,8 +483,8 @@ export async function fetchFilteredCustomers(query: string) {
 		  customers.email,
 		  customers.image_url,
 		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'ausstehend' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'genehmigt' THEN invoices.amount ELSE 0 END) AS total_paid
+		  COUNT(CASE WHEN invoices.status = 'ausstehend' THEN invoices.amount ELSE 0 END) AS total_pending,
+		  COUNT(CASE WHEN invoices.status = 'genehmigt' THEN invoices.amount ELSE 0 END) AS total_paid
 		FROM customers
 		LEFT JOIN invoices ON customers.id = invoices.customer_id
 		WHERE
@@ -514,22 +514,36 @@ export async function fetchFilteredCustomersUser(query: string, sessionUserEmail
 
   try {
     const customers = await sql<CustomersTable>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'ausstehend' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'genehmigt' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		    (customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}) AND
-        customers.email ILIKE ${`%${sessionUserEmail}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
+    WITH CTE AS (
+      SELECT
+            customers.id,
+            customers.name,
+            customers.email,
+            customers.image_url,
+            case when status = 'ausstehend' then 1 else 0 end as ausstehend,
+            case when status = 'geprüft' then 1 else 0 end as geprueft,
+            case when status = 'genehmigt' then 1 else 0 end as genehmigt
+      FROM invoices 
+      LEFT JOIN customers 
+      ON invoices.customer_id = customers.id 
+    )
+      SELECT
+          id,
+          name,
+          email,
+          image_url,
+          sum(ausstehend) as total_ausstehend,
+          sum(geprueft) as total_geprueft,
+          sum(genehmigt) as total_genehmigt
+      FROM CTE
+      WHERE
+        (
+		      name ILIKE ${`%${query}%`} OR
+          email ILIKE ${`%${query}%`}
+        ) AND
+          email ILIKE ${`%${sessionUserEmail}%`}
+      GROUP BY id, name, email, image_url
+      ORDER BY name ASC
 	  `;
 
     /* const customers = data.rows.map((customer) => ({
@@ -552,22 +566,39 @@ export async function fetchFilteredCustomersSparten(query: string, sparte: strin
 
   try {
     const customers = await sql<CustomersTable>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'ausstehend' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'genehmigt' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		    (customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}) AND
-        invoices.groupid ILIKE ${`%${sparte}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
+    WITH CTE AS (
+      SELECT
+            customers.id,
+            customers.name,
+            customers.email,
+            customers.image_url,
+            invoices.groupid,
+            case when status = 'ausstehend' then 1 else 0 end as ausstehend,
+            case when status = 'geprüft' then 1 else 0 end as geprueft,
+            case when status = 'genehmigt' then 1 else 0 end as genehmigt
+      FROM invoices 
+      LEFT JOIN customers 
+      ON invoices.customer_id = customers.id 
+    )
+      SELECT
+          id,
+          name,
+          email,
+          image_url,
+          groupid,
+          sum(ausstehend) as total_ausstehend,
+          sum(geprueft) as total_geprueft,
+          sum(genehmigt) as total_genehmigt
+      FROM CTE
+      WHERE
+		    (
+          name ILIKE ${`%${query}%`} OR
+          email ILIKE ${`%${query}%`}
+        ) 
+        AND
+          groupid ILIKE ${`%${sparte}%`}
+      GROUP BY id, name, email, image_url, groupid
+      ORDER BY name ASC
 	  `;
 
     /* const customers = data.rows.map((customer) => ({
