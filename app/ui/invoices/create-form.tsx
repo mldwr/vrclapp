@@ -266,7 +266,6 @@ export default function Form({ customers, groups, }: { customers: CustomerField[
   );
 }
 
-
 function CreateInvoiceButton() {
   const { pending } = useFormStatus();
  

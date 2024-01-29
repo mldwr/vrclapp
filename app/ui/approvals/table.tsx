@@ -52,8 +52,8 @@ export default async function ApprovalsTable({
                   </div>
                   <div className="flex justify-end gap-2">
                     <ApproveInvoice id={invoice.id} invoices={invoices} sparteUser={sparteUser} sessionUserRole={sessionUserRole}/>
-                    <UpdateInvoice id={invoice.id} />
-                    <DeleteInvoice id={invoice.id} />
+                    {/*<UpdateInvoice id={invoice.id} />
+                    <DeleteInvoice id={invoice.id} />*/}
                   </div>
                 </div>
               </div>
