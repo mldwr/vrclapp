@@ -430,7 +430,7 @@ export async function fetchSparten( query: string) {
         sl.name as spartenleiter,
         sp.spartenleiter as spartenleiterEmail
       FROM sparten sp
-      left join users sl
+      left join customers sl
       on sp.spartenleiter = sl.email
       WHERE
       sp.name ILIKE ${`%${query}%`} OR
@@ -477,21 +477,35 @@ export async function fetchFilteredCustomers(query: string) {
 
   try {
     const customers = await sql<CustomersTable>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  COUNT(CASE WHEN invoices.status = 'ausstehend' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  COUNT(CASE WHEN invoices.status = 'genehmigt' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		    (customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`})
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
+    WITH CTE AS (
+      SELECT
+            customers.id,
+            customers.name,
+            customers.email,
+            customers.image_url,
+            case when status = 'ausstehend' then 1 else 0 end as ausstehend,
+            case when status = 'geprüft' then 1 else 0 end as geprueft,
+            case when status = 'genehmigt' then 1 else 0 end as genehmigt
+      FROM invoices 
+      LEFT JOIN customers 
+      ON invoices.customer_id = customers.id 
+    )
+      SELECT
+          id,
+          name,
+          email,
+          image_url,
+          sum(ausstehend) as total_ausstehend,
+          sum(geprueft) as total_geprueft,
+          sum(genehmigt) as total_genehmigt
+      FROM CTE
+      WHERE
+        (
+		      name ILIKE ${`%${query}%`} OR
+          email ILIKE ${`%${query}%`}
+        ) 
+      GROUP BY id, name, email, image_url
+      ORDER BY name ASC
 	  `;
 
     /* const customers = data.rows.map((customer) => ({
