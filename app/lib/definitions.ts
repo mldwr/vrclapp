@@ -54,7 +54,7 @@ export type InvoicesTable = {
   image_url: string;
   date: string;
   amount: number;
-  part: number;
+  hours: number;
   status: 'ausstehend' | 'geprüft' | 'genehmigt';
   groupid: string;
 };
@@ -67,6 +67,7 @@ export type CustomersTable = {
   total_ausstehend: number;
   total_geprueft: number;
   total_genehmigt: number;
+  rate: number;
 };
 
 export type FormattedCustomersTable = {
@@ -77,6 +78,7 @@ export type FormattedCustomersTable = {
   total_ausstehend: number;
   total_geprueft: number;
   total_genehmigt: number;
+  rate: number;
   // the FormattedCustomersTable was used to hold the currency format.
   // see data.ts and fetchFilteredCustomers
   // total_pending: string;
@@ -93,7 +95,7 @@ export type InvoiceForm = {
   id: string;
   customer_id: string;
   amount: number;
-  part: number;
+  hours: number;
   date: string;
   status: 'ausstehend' | 'geprüft' | 'genehmigt';
   groupid: string;

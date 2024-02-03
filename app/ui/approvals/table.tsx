@@ -45,8 +45,7 @@ export default async function ApprovalsTable({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {/* {formatCurrency(invoice.amount)} */}
-                      {invoice.amount}
+                      {formatCurrency(invoice.amount)}
                     </p>
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
@@ -69,10 +68,10 @@ export default async function ApprovalsTable({
                   Sparten
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Teilnehmer
+                  Stunden
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Stunden
+                  Betrag
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Datum
@@ -108,11 +107,10 @@ export default async function ApprovalsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {/* {formatCurrency(invoice.amount)} */}
-                    {invoice.part}
+                    {invoice.hours}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {/* {formatCurrency(invoice.amount)} */}
-                    {invoice.amount}
+                    {formatCurrency(invoice.amount)} 
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {formatDateToLocal(invoice.date)}

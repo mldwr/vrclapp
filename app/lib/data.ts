@@ -146,7 +146,7 @@ export async function fetchInvoicesUser( query: string, currentPage: number, ses
     SELECT
         invoices.id,
         invoices.amount,
-        invoices.part,
+        invoices.hours,
         invoices.date,
         invoices.status,
         customers.name,
@@ -159,7 +159,6 @@ export async function fetchInvoicesUser( query: string, currentPage: number, ses
         (
           customers.name ILIKE ${`%${query}%`} OR
           customers.email ILIKE ${`%${query}%`} OR
-          invoices.amount::text ILIKE ${`%${query}%`} OR
           invoices.date::text ILIKE ${`%${query}%`} OR
           invoices.status ILIKE ${`%${query}%`}
         ) AND
@@ -174,7 +173,7 @@ export async function fetchInvoicesUser( query: string, currentPage: number, ses
     return invoices.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch fetchInvoicesUser.');
   }
 }
 
@@ -191,7 +190,7 @@ export async function fetchInvoicesApproveList( query: string, currentPage: numb
     SELECT
         invoices.id,
         invoices.amount,
-        invoices.part,
+        invoices.hours,
         invoices.date,
         invoices.status,
         customers.name,
@@ -218,7 +217,7 @@ export async function fetchInvoicesApproveList( query: string, currentPage: numb
     return invoices.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch fetchInvoicesApproveList.');
   }
 }
 
@@ -235,7 +234,7 @@ export async function fetchInvoicesApproveListSparte( query: string, currentPage
     SELECT
         invoices.id,
         invoices.amount,
-        invoices.part,
+        invoices.hours,
         invoices.date,
         invoices.status,
         customers.name,
@@ -266,7 +265,7 @@ export async function fetchInvoicesApproveListSparte( query: string, currentPage
     return invoices.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch fetchInvoicesApproveListSparte.');
   }
 }
 
@@ -398,7 +397,7 @@ export async function fetchInvoiceById(id: string) {
     invoices.id,
     invoices.customer_id,
     invoices.amount,
-    invoices.part,
+    invoices.hours,
     invoices.date,
     invoices.status,
     invoices.groupid
@@ -485,7 +484,8 @@ export async function fetchFilteredCustomers(query: string) {
             customers.image_url,
             case when status = 'ausstehend' then 1 else 0 end as ausstehend,
             case when status = 'geprüft' then 1 else 0 end as geprueft,
-            case when status = 'genehmigt' then 1 else 0 end as genehmigt
+            case when status = 'genehmigt' then 1 else 0 end as genehmigt,
+            customers.rate
       FROM invoices 
       LEFT JOIN customers 
       ON invoices.customer_id = customers.id 
@@ -497,14 +497,15 @@ export async function fetchFilteredCustomers(query: string) {
           image_url,
           sum(ausstehend) as total_ausstehend,
           sum(geprueft) as total_geprueft,
-          sum(genehmigt) as total_genehmigt
+          sum(genehmigt) as total_genehmigt,
+          rate
       FROM CTE
       WHERE
         (
 		      name ILIKE ${`%${query}%`} OR
           email ILIKE ${`%${query}%`}
         ) 
-      GROUP BY id, name, email, image_url
+      GROUP BY id, name, email, image_url, rate
       ORDER BY name ASC
 	  `;
 
@@ -536,7 +537,8 @@ export async function fetchFilteredCustomersUser(query: string, sessionUserEmail
             customers.image_url,
             case when status = 'ausstehend' then 1 else 0 end as ausstehend,
             case when status = 'geprüft' then 1 else 0 end as geprueft,
-            case when status = 'genehmigt' then 1 else 0 end as genehmigt
+            case when status = 'genehmigt' then 1 else 0 end as genehmigt,
+            customers.rate
       FROM invoices 
       LEFT JOIN customers 
       ON invoices.customer_id = customers.id 
@@ -548,7 +550,8 @@ export async function fetchFilteredCustomersUser(query: string, sessionUserEmail
           image_url,
           sum(ausstehend) as total_ausstehend,
           sum(geprueft) as total_geprueft,
-          sum(genehmigt) as total_genehmigt
+          sum(genehmigt) as total_genehmigt,
+          rate
       FROM CTE
       WHERE
         (
@@ -556,7 +559,7 @@ export async function fetchFilteredCustomersUser(query: string, sessionUserEmail
           email ILIKE ${`%${query}%`}
         ) AND
           email ILIKE ${`%${sessionUserEmail}%`}
-      GROUP BY id, name, email, image_url
+      GROUP BY id, name, email, image_url, rate
       ORDER BY name ASC
 	  `;
 
@@ -589,7 +592,8 @@ export async function fetchFilteredCustomersSparten(query: string, sparte: strin
             invoices.groupid,
             case when status = 'ausstehend' then 1 else 0 end as ausstehend,
             case when status = 'geprüft' then 1 else 0 end as geprueft,
-            case when status = 'genehmigt' then 1 else 0 end as genehmigt
+            case when status = 'genehmigt' then 1 else 0 end as genehmigt,
+            customers.rate
       FROM invoices 
       LEFT JOIN customers 
       ON invoices.customer_id = customers.id 
@@ -602,7 +606,8 @@ export async function fetchFilteredCustomersSparten(query: string, sparte: strin
           groupid,
           sum(ausstehend) as total_ausstehend,
           sum(geprueft) as total_geprueft,
-          sum(genehmigt) as total_genehmigt
+          sum(genehmigt) as total_genehmigt,
+          rate
       FROM CTE
       WHERE
 		    (
@@ -611,7 +616,7 @@ export async function fetchFilteredCustomersSparten(query: string, sparte: strin
         ) 
         AND
           groupid ILIKE ${`%${sparte}%`}
-      GROUP BY id, name, email, image_url, groupid
+      GROUP BY id, name, email, image_url, groupid, rate
       ORDER BY name ASC
 	  `;
 
