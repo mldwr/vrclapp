@@ -16,13 +16,9 @@ const FormSchema = z.object({
   groupId: z.string({
     invalid_type_error: 'Please select a group.',
   }),
-  amount: z.coerce
+  hours: z.coerce
     .number()
-    .gt(0, { message: 'Please enter an amount greater than 0.' 
-  }),
-  part: z.coerce
-    .number()
-    .gt(0, { message: 'Please enter an amount greater than 0.' 
+    .gt(0, { message: 'Please enter an hours greater than 0.' 
   }),
   dateId: z.coerce.date({
     invalid_type_error: 'Please enter a valid date.',
@@ -37,8 +33,7 @@ const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 export type State = {
   errors?: {
     customerId?: string[];
-    amount?: string[];
-    part?: string[];
+    hours?: string[];
     groupId?: string[];
     dateId?: string[];
   };
@@ -51,8 +46,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
     customerId: formData.get('customerId'),
     groupId: formData.get('groupId'),
     dateId: formData.get('dateId'),
-    amount: formData.get('amount'),
-    part: formData.get('part'),
+    hours: formData.get('hours'),
   });
 
   //console.log(prevState.message)
@@ -65,7 +59,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
   }
 
   // Prepare data for insertion into the database
-  const { customerId, groupId, amount, part, dateId} = validatedFields.data;
+  const { customerId, groupId, hours, dateId} = validatedFields.data;
   //const amountInCents = amount * 100;
   //const date = new Date().toISOString().split('T')[0];
   const date = dateId.toISOString();
@@ -74,12 +68,20 @@ export async function createInvoice(prevState: State, formData: FormData) {
   try {
 
     await sql`
-    INSERT INTO invoices (customer_id, amount, status, date, part, groupId)
-    VALUES (${customerId}, ${amount}, ${status}, ${date}, ${part}, ${groupId})
+      INSERT INTO invoices (customer_id, amount, status, date, hours, groupId)
+      SELECT
+          ${customerId},
+          ${hours} * s.rate,
+          ${status},
+          ${date},
+          ${hours},
+          ${groupId}
+      FROM customers s
+      WHERE s.id = ${customerId};
     `;
 
   } catch (error) {
-    console.error('Databse Error: ', error,customerId, amount, status, date, part, groupId)
+    console.error('Databse Error: ', error,customerId, status, date, hours, groupId)
     return { message: 'Database Error: Failed to Insert Invoice.' };
   }
 
@@ -94,8 +96,7 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
         customerId: formData.get('customerId'),
         groupId: formData.get('groupId'),
         dateId: formData.get('dateId'),
-        amount: formData.get('amount'),
-        part: formData.get('part'),
+        hours: formData.get('hours'),
     });
 
     if (!validatedFields.success) {
@@ -106,21 +107,25 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     }
 
 
-    const { customerId, groupId, dateId, amount, part } = validatedFields.data;
+    const { customerId, groupId, dateId, hours } = validatedFields.data;
     //const amountInCents = amount * 100;
     //const status = 'pending';
 
+    console.log('redirect? 1', id, validatedFields.data)
     const isoString = dateId.toISOString();
     //const formattedDate = isoString.split('T')[0];
 
     try {
         await sql`
-        UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amount}, groupid=${groupId}, part=${part}, date=${isoString}
-        WHERE id = ${id}
+          UPDATE invoices
+          SET customer_id = ${customerId}, groupid=${groupId}, hours=${hours}, amount=${hours} * s.rate, date=${isoString}
+          FROM customers s
+          WHERE invoices.customer_id = s.id
+          AND invoices.id = ${id}
         `;
        
     } catch (error) {
+        console.error('Databse Error: ', error,customerId, hours, groupId)
         return { message: 'Database Error: Failed to Update Invoice.' };
     }
     
