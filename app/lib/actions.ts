@@ -111,7 +111,6 @@ export async function updateInvoice(id: string, prevState: State, formData: Form
     //const amountInCents = amount * 100;
     //const status = 'pending';
 
-    console.log('redirect? 1', id, validatedFields.data)
     const isoString = dateId.toISOString();
     //const formattedDate = isoString.split('T')[0];
 

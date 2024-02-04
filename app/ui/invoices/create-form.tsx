@@ -272,8 +272,8 @@ function CreateInvoiceButton() {
   const { pending } = useFormStatus();
  
   return (
-    <Button aria-disabled={pending} >
-      Erstelle Abrechnung 
+    <Button aria-disabled={pending} disabled={pending}> 
+      {pending ? "Senden..." : "Erstelle Abrechnung"}
     </Button>
   );
 }
