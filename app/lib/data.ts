@@ -25,7 +25,48 @@ export async function fetchRevenue() {
     //console.log('Fetching revenue data...');
     //await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
+    //const data = await sql<Revenue>`SELECT * FROM revenue`;
+    const data = await sql<Revenue>
+    `
+    with cte_month as (
+      select 1 as NumMonth, 'Jan' as Month
+      union
+      select 2 as NumMonth, 'Feb' as Month
+      union
+      select 3 as NumMonth, 'Mar' as Month
+      union
+      select 4 as NumMonth, 'Apr' as Month
+      union
+      select 5 as NumMonth, 'Mai' as Month
+      union
+      select 6 as NumMonth, 'Jun' as Month
+      union
+      select 7 as NumMonth, 'Jul' as Month
+      union
+      select 8 as NumMonth, 'Aug' as Month
+      union
+      select 9 as NumMonth, 'Sep' as Month
+      union
+      select 10 as NumMonth, 'Okt' as Month
+      union
+      select 11 as NumMonth, 'Nov' as Month
+      union
+      select 12 as NumMonth, 'Dec' as Month
+    ), cte_data as (
+      select extract(YEAR FROM date) as year, extract(MONTH FROM date) as nummonth,sum(amount)/100 as revenue 
+      from invoices
+      group by extract(YEAR FROM date) , extract(MONTH FROM date)
+      limit 12
+    ), cte_group as (
+      select Year, Month, max(cte_data.nummonth) over (partition by year) as maxmon,  cte_data.nummonth, Revenue
+      from cte_data
+      join cte_month
+      on cte_data.nummonth = cte_month.nummonth
+      order by year desc, cte_data.nummonth desc
+    )
+    select case when maxmon=nummonth then year::varchar(4) else '' end as Year, Month, Revenue  
+    from cte_group
+    `;      
 
     //console.log('Data fetch complete after 3 seconds.');
 
@@ -68,8 +109,8 @@ export async function fetchCardData() {
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
+         SUM(CASE WHEN status = 'genehmigt' THEN amount ELSE 0 END) AS "paid",
+         SUM(CASE WHEN status = 'ausstehend' THEN amount ELSE 0 END) AS "pending"
          FROM invoices`;
 
     const data = await Promise.all([

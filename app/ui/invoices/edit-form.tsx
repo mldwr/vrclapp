@@ -276,7 +276,7 @@ function UpdateInvoiceButton() {
   const { pending } = useFormStatus();
  
   return (
-    <Button aria-disabled={pending} >
+    <Button aria-disabled={pending} disabled={pending}>
       Bearbeite Abrechnung 
     </Button>
   );
