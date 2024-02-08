@@ -77,7 +77,7 @@ export default async function CustomersTable({
                       Genehmigt
                     </th>
                     <th scope="col" className="px-4 py-5 font-medium">
-                      Stundensatz
+                      Pauschale
                     </th>
                   </tr>
                 </thead>

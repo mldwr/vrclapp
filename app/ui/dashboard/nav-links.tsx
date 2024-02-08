@@ -17,8 +17,8 @@ import clsx from 'clsx';
 const links = [
   { name: 'Übersicht', href: '/dashboard', icon: HomeIcon },
   { name: 'Abrechnungen', href: '/dashboard/invoices', icon: DocumentDuplicateIcon, },
-  { name: 'Übungsleiter', href: '/dashboard/customers', icon: UserCircleIcon },
   { name: 'Freigaben', href: '/dashboard/approvals', icon: UserGroupIcon },
+  { name: 'Übungsleiter', href: '/dashboard/customers', icon: UserCircleIcon },
   { name: 'Sparten', href: '/dashboard/sparten', icon: ClipboardDocumentListIcon },
 ];
 
