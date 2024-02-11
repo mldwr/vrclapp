@@ -53,7 +53,7 @@ export default async function RevenueChart() { // Make component async, remove t
                 {month.month}
               </p>
               <p className="-rotate-90 text-sm text-gray-400 sm:rotate-0">
-                {month.year !== '' ? month.year : '.'}
+                {month.year !== '' ? month.year : '‎ '}
               </p>
             </div>
           ))}
