@@ -6,9 +6,9 @@ import { lusitana } from '@/app/ui/fonts';
 import { fetchLatestInvoices } from '@/app/lib/data';
 
 //export default async function LatestInvoices({latestInvoices,}: {  latestInvoices: LatestInvoice[];}) {
-export default async function LatestInvoices() {
+export default async function LatestInvoices({sessionUserEmail}:{sessionUserEmail: string;}) {
 
-  const latestInvoices = await fetchLatestInvoices();
+  const latestInvoices = await fetchLatestInvoices(sessionUserEmail);
 
   return (
     <div className="flex w-full flex-col md:col-span-4 lg:col-span-4">

@@ -26,9 +26,10 @@ export const generateYAxis = (revenue: Revenue[]) => {
   // based on highest record and in 1000s
   const yAxisLabels = [];
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-  const topLabel = Math.ceil(highestRecord / 100) * 100;
+  //const topLabel = Math.ceil(highestRecord / 100) * 100;
+  const topLabel = Math.ceil(highestRecord / 10) * 10;
 
-  for (let i = topLabel; i >= 0; i -= 100) {
+  for (let i = topLabel; i >= 0; i -= 20) {
     yAxisLabels.push(`${i / 1}€`);
     //yAxisLabels.push(`$${i / 100}K`);
   }

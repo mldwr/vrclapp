@@ -13,7 +13,7 @@ import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
 
 
-export async function fetchRevenue() {
+export async function fetchRevenue(sessionUserEmail: string) {
   // Add noStore() here prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
   noStore();
@@ -55,6 +55,8 @@ export async function fetchRevenue() {
     ), cte_data as (
       select extract(YEAR FROM date) as year, extract(MONTH FROM date) as nummonth,sum(amount)/100 as revenue 
       from invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE customers.email ILIKE ${`%${sessionUserEmail}%`}
       group by extract(YEAR FROM date) , extract(MONTH FROM date)
       limit 12
     ), cte_group as (
@@ -77,7 +79,7 @@ export async function fetchRevenue() {
   }
 }
 
-export async function fetchLatestInvoices() {
+export async function fetchLatestInvoices(sessionUserEmail: string) {
   noStore();
   
   try {
@@ -88,6 +90,7 @@ export async function fetchLatestInvoices() {
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
+      WHERE customers.email ILIKE ${`%${sessionUserEmail}%`}
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
@@ -99,19 +102,32 @@ export async function fetchLatestInvoices() {
   }
 }
 
-export async function fetchCardData() {
+export async function fetchCardData(sessionUserEmail: string) {
   noStore();
 
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'genehmigt' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'ausstehend' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+    const invoiceCountPromise = sql`
+        SELECT count(*)
+        FROM invoices
+        JOIN customers ON invoices.customer_id = customers.id
+        WHERE customers.email ILIKE ${`%${sessionUserEmail}%`}
+        `;
+    const customerCountPromise = sql`
+        SELECT COUNT(*) 
+        FROM customers
+        WHERE customers.email ILIKE ${`%${sessionUserEmail}%`}
+        `;
+    const invoiceStatusPromise = sql`
+        SELECT
+          SUM(CASE WHEN status = 'genehmigt' THEN amount ELSE 0 END) AS "paid",
+          SUM(CASE WHEN status = 'ausstehend' THEN amount ELSE 0 END) AS "pending"
+        FROM invoices
+        JOIN customers ON invoices.customer_id = customers.id
+        WHERE customers.email ILIKE ${`%${sessionUserEmail}%`}
+        `;
 
     const data = await Promise.all([
       invoiceCountPromise,
